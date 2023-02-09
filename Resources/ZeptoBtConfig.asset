@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd364369b2ffa08408eb2786d0c00aca, type: 3}
+  m_Name: ZeptoBtConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ZeptoBtNameToNode
+  nameToNodes:
+  - name: root
+    node: ZeptoBt.NodeRoot
+  - name: '>'
+    node: ZeptoBt.NodeSequence
+  - name: '?'
+    node: ZeptoBt.NodeSelector
+  - name: wait
+    node: ZeptoBt.NodeLeafWait
+  - name: $
+    node: ZeptoBt.NodeLeafExpression
+  - name: activate
+    node: ZeptoBt.NodeLeafActivate
+  - name: invertify
+    node: ZeptoBt.NodeDecoratorInvert
+  - name: successify
+    node: ZeptoBt.NodeDecoratorSuccessify
+  - name: failify
+    node: ZeptoBt.NodeDecoratorForceFailify
+  - name: repeatify
+    node: ZeptoBt.NodeDecoratorRepeat
+  - name: rowresetify
+    node: ZeptoBt.NodeDecoratorRowReset
+  - name: vel
+    node: ZeptoBt.NodeLeafVelocity
+  - name: trigger
+    node: ZeptoBt.NodeLeafTrigger
+  - name: scale
+    node: ZeptoBt.NodeLeafScale
+  - name: moveto
+    node: ZeptoBt.NodeLeafMoveTo
+  - name: roam
+    node: ZeptoBt.NodeLeafRoam
+  - name: prowl
+    node: ZeptoBt.NodeLeafProwl
+  - name: dodge
+    node: ZeptoBt.NodeLeafDodge
+  - name: spine
+    node: ZeptoBt.NodeLeafSpine
+  - name: hit
+    node: ZeptoBt.NodeLeafHit
