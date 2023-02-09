@@ -34,10 +34,10 @@ public class ZeptoBtTree : MonoBehaviour
     private List<string> animationNames = new List<string>();
     Coroutine[] animationCoroutines = new Coroutine[5];
 
-    public int[] TriggerCounts { get; set; } = new int[Enum.GetNames(typeof(ZeptoBtTrigger.TriggerType)).Length];
+    public Dictionary<string, int> TriggerCounts { get; set; } = new Dictionary<string, int>();
     public class TriggerObject
     {
-        public ZeptoBtTrigger.TriggerType type;
+        public string type;
         public GameObject gameObject;
     }
     public List<TriggerObject> TriggerObjects { get; set; } = new List<TriggerObject>();
@@ -231,9 +231,10 @@ public class ZeptoBtTree : MonoBehaviour
         ImpulseVx = 0;
         ImpulseVy = 0;
     }
-    private void TriggerEnter(ZeptoBtTrigger.TriggerType triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
+    private void TriggerEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
     {
-        TriggerCounts[(int)triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
+        if (!TriggerCounts.ContainsKey(triggerType)) TriggerCounts[triggerType] = 0;
+        TriggerCounts[triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
         if (triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter)
             TriggerObjects.Add(new TriggerObject() { gameObject = other.gameObject, type = triggerType });
         else
@@ -241,7 +242,7 @@ public class ZeptoBtTree : MonoBehaviour
        CrossTree();
     }
 
-    public GameObject GetTriggerObject(ZeptoBtTrigger.TriggerType type)
+    public GameObject GetTriggerObject(string type)
     {
         var to = TriggerObjects.Find(to => to.type == type);
 

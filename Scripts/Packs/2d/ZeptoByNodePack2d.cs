@@ -128,7 +128,7 @@ namespace ZeptoBt
             }
         }
 
-        private NodeParam<ZeptoBtTrigger.TriggerType> target = new NodeParam<ZeptoBtTrigger.TriggerType>(ZeptoBtTrigger.TriggerType.Player);
+        private NodeParam<string> target = new NodeParam<string>("Player");
         private NodeParam<float> vel = new NodeParam<float>(2);
         private NodeParam<float> radius = new NodeParam<float>(3);
         private NodeParam<float> angleStep = new NodeParam<float>(0.1f);
@@ -197,7 +197,7 @@ namespace ZeptoBt
                         break;
                     case 2:
                         mode = Mode.Trigger;
-                        System.Enum.TryParse<ZeptoBtTrigger.TriggerType>(base.Params[1], true, out triggerTarget);
+                        triggerTarget = base.Params[1];
                         break;
                     case 3:
                         mode = Mode.Pos;
@@ -212,7 +212,7 @@ namespace ZeptoBt
         private NodeParam<float> vel = new NodeParam<float>();
         private NodeParam<float> x = new NodeParam<float>();
         private NodeParam<float> y = new NodeParam<float>();
-        private ZeptoBtTrigger.TriggerType triggerTarget;
+        private string triggerTarget;
         enum Mode { Pos, Trigger, Random }
         private Mode mode;
         private float randomTargetUpdateDate;
@@ -292,7 +292,7 @@ namespace ZeptoBt
 
                 if (base.Params.Length > 2)
                 {
-                    System.Enum.TryParse<ZeptoBtTrigger.TriggerType>(base.Params[2], true, out triggerTarget);
+                    triggerTarget = base.Params[2];
                 }
 
                 if (base.Params.Length > 3)
@@ -311,7 +311,7 @@ namespace ZeptoBt
         private string vxVar;
         private float vy;
         private string vyVar;
-        private ZeptoBtTrigger.TriggerType triggerTarget;
+        private string triggerTarget;
         private bool isJump;
 
         public override void Tick()
@@ -334,7 +334,7 @@ namespace ZeptoBt
                         dir.y * (vyVar != null ? (float)Root.Evaluator.Variables[vyVar] : vy));
             Tree.Vx = velocity.x;
             Tree.ApplyVx = true;
-            if (!isJump || Tree.TriggerCounts[(int)ZeptoBtTrigger.TriggerType.Ground] > 0)
+            if (!isJump || (Tree.TriggerCounts.ContainsKey("Ground") && Tree.TriggerCounts["Ground"] > 0))
             {
                 Tree.ApplyVy = true;
                 Tree.Vy = Mathf.Abs(velocity.y);
@@ -409,7 +409,7 @@ namespace ZeptoBt
 
                 if (base.Params.Length > 0)
                 {
-                    System.Enum.TryParse<ZeptoBtTrigger.TriggerType>(base.Params[0], true, out type);
+                    type = base.Params[0];
                 }
 
                 if (base.Params.Length > 1)
@@ -419,7 +419,7 @@ namespace ZeptoBt
             }
         }
 
-        private ZeptoBtTrigger.TriggerType type;
+        private string type;
         private bool isOn;
 
         public override void Abort()
@@ -428,7 +428,7 @@ namespace ZeptoBt
         public override void Tick()
         {
             // Debug.Log($"BT TICK - {this}");
-            if (Tree.TriggerCounts[(int)type] > 0 == isOn)
+            if (Tree.TriggerCounts.ContainsKey(type) && Tree.TriggerCounts[type] > 0 == isOn)
                 Status = NodeReturn.Success;
             else
                 Status = NodeReturn.Failure;
