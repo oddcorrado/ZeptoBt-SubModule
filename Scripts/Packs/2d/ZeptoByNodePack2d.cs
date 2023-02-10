@@ -428,7 +428,7 @@ namespace ZeptoBt
         public override void Tick()
         {
             // Debug.Log($"BT TICK - {this}");
-            if (Tree.TriggerCounts.ContainsKey(type) && Tree.TriggerCounts[type] > 0 == isOn)
+            if ((Tree.TriggerCounts.ContainsKey(type) && Tree.TriggerCounts[type] > 0) == isOn)
                 Status = NodeReturn.Success;
             else
                 Status = NodeReturn.Failure;

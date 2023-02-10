@@ -235,6 +235,7 @@ public class ZeptoBtTree : MonoBehaviour
     {
         if (!TriggerCounts.ContainsKey(triggerType)) TriggerCounts[triggerType] = 0;
         TriggerCounts[triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
+        Debug.Log($"TRIGGER {triggerType} {TriggerCounts[triggerType]}");
         if (triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter)
             TriggerObjects.Add(new TriggerObject() { gameObject = other.gameObject, type = triggerType });
         else
