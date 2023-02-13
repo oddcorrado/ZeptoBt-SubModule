@@ -5,49 +5,42 @@ using UnityEngine;
 public class ZeptoBtTrigger : MonoBehaviour
 {
     [System.Serializable]
-    public class TriggerFilter
+    public class Trigger
     {
         public string name;
         public string tag;
+        public string type;
     }
     public enum TriggerEvent { Enter, Exit }
-    [SerializeField] string triggerType;
-    [SerializeField] TriggerFilter[] filters;
+    [SerializeField] Trigger[] triggers;
 
     public delegate void TriggerEnterDelegate(string triggerType, TriggerEvent triggEvent, Collider2D other);
     public event TriggerEnterDelegate TriggerEnterEvent;
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(filters.Length == 0) TriggerEnterEvent?.Invoke(triggerType, TriggerEvent.Enter, other);
-        else
+        foreach (var trigger in triggers)
         {
-            foreach(var filter in filters)
+            if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
+                && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
             {
-                if ((filter.name == null || filter.name == "" || filter.name == other.name)
-                    && (filter.tag == null || filter.tag == "" || filter.tag == other.tag))
-                {
-                    TriggerEnterEvent?.Invoke(triggerType, TriggerEvent.Enter, other);
-                    return;
-                }
+                TriggerEnterEvent?.Invoke(trigger.type, TriggerEvent.Enter, other);
+                // return;
             }
-        }   
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (filters.Length == 0) TriggerEnterEvent?.Invoke(triggerType, TriggerEvent.Enter, other);
-        else
+        foreach (var trigger in triggers)
         {
-            foreach (var filter in filters)
+            if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
+                && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
             {
-                if ((filter.name == null || filter.name == "" || filter.name == other.name)
-                    && (filter.tag == null || filter.tag == "" || filter.tag == other.tag))
-                {
-                    TriggerEnterEvent?.Invoke(triggerType, TriggerEvent.Exit, other);
-                    return;
-                }
+                TriggerEnterEvent?.Invoke(trigger.type, TriggerEvent.Exit, other);
+                // return;
             }
         }
     }
 }
+

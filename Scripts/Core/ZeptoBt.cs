@@ -23,6 +23,8 @@ namespace ZeptoBt
         public NodeComposite compositeParent;
         public NodeRoot Root { get; set; }
 
+        public virtual string Documentation { get; } = "Put your doc here";
+
         public int Index { get; set; }
 
         public ZeptoBtTree Tree { get; set; }
@@ -127,6 +129,10 @@ namespace ZeptoBt
     {
         public Node CurrentNode { get; set; }
         public ExpressionEvaluator Evaluator { get; set; } = new ExpressionEvaluator();
+
+        public override string Documentation { get; } = 
+            "[root] : Root Node\n" +
+            "First node in the tree, all operations on the tree go trough this node.";
 
         // evaluator.Variables = new Dictionary<string, object>() {};
 
