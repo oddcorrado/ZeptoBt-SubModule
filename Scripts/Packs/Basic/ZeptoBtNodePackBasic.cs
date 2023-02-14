@@ -2,10 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/* 
+ * <#ff9900><b>[activate name activate] : </b><#ffff00>activates/deactivates child game object
+<#00ff00>controls activation of child gameobject
+<#00eeff><b>name: </b><#0099ff>child gameobject name, string, default to ''
+<#00eeff><b>activate: </b><#0099ff>activate or deactivate, true/false, default to false*/
+
 namespace ZeptoBt
 {
     public class NodeDecoratorInvert : NodeDecorator
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[invertify] : </b><#ffff00>invert decorator\n" +
+            "<#00ff00>inverts the result of the child node";
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -27,6 +36,9 @@ namespace ZeptoBt
 
     public class NodeDecoratorSuccessify : NodeDecorator
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[successify] : </b><#ffff00>force success decorator\n" +
+            "<#00ff00>always returns success whether the child execution succeeds or fails";
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -42,6 +54,9 @@ namespace ZeptoBt
 
     public class NodeDecoratorFailify : NodeDecorator
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[failify] : </b><#ffff00>force success decorator\n" +
+            "<#00ff00>always returns faillure whether the child execution succeeds or fails";
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -56,6 +71,9 @@ namespace ZeptoBt
     public class NodeDecoratorOnce : NodeDecorator
     {
         private bool done;
+        public override string Documentation { get; } =
+            "<#ff9900><b>[onceify] : </b><#ffff00>executes child only once\n" +
+            "<#00ff00>executes child once, returns succes once child has executed";
 
         public override void Tick()
         {
@@ -80,6 +98,9 @@ namespace ZeptoBt
         private bool done;
         private bool initDone;
 
+        public override string Documentation { get; } =
+            "<#ff9900><b>[gatify] : </b><#ffff00>executes child only once it has returned success\n" +
+            "<#00ff00>executes child once, returns success once child has executed with success";
         protected override void OnExit(NodeReturn exitEvent)
         {
             done = false;
@@ -111,6 +132,10 @@ namespace ZeptoBt
         private bool done;
         private bool initDone;
 
+        public override string Documentation { get; } =
+            "<#ff9900><b>[rowresetify] : </b><#ffff00>executes child once until row has reset\n" +
+            "<#00ff00>executes child once, resets if a previous node fails or wait";
+
         protected override void OnExit(NodeReturn exitEvent)
         {
             if (Root.CurrentNode.Index < Index)
@@ -141,8 +166,9 @@ namespace ZeptoBt
 
     public class NodeDecoratorRepeat : NodeDecorator
     {
-        private bool done;
-        private bool initDone;
+        public override string Documentation { get; } =
+            "<#ff9900><b>[repeatify] : </b><#ffff00>repeats child if it returns success\n" +
+            "<#00ff00>if the child returns succes it resets the child";
 
         public override void Tick()
         {
@@ -165,6 +191,12 @@ namespace ZeptoBt
 
     public class NodeSequence : NodeComposite
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[>] : </b><#ffff00>executes childs in sequence\n" +
+            "<#00ff00>executes child in sequence, whenever a child fails fails\n" +
+            "returns wait if a child wait\n" +
+            "returns success if all children succeed";
+
         public override void Tick()
         {
             int i = 0;
@@ -217,7 +249,11 @@ namespace ZeptoBt
     }
     public class NodeSelector : NodeComposite
     {
-
+        public override string Documentation { get; } =
+            "<#ff9900><b>[?] : </b><#ffff00>selects first child to succeed\n" +
+            "<#00ff00>executes child in sequence, whenever a child fails tries the next\n" +
+            "returns wait if a child wait\n" +
+            "returns success if a child succeeds";
         public override void Tick()
         {
             int i = 0;
@@ -266,6 +302,13 @@ namespace ZeptoBt
 
     public class NodeLeafWait : NodeLeaf
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[wait timeout mode] : </b><#ffff00>waits for a timeout\n" +
+            "<#00ff00>returns wait until timeout expires, timeout can be reset with tree abort\n" +
+            "<#00eeff><b>timeout: </b><#0099ff>timeout before success, float variable, default to 0\n" +
+            "<#00eeff><b>mode: </b><#0099ff>Block timer does not reset / Skip timer is reset at success, Block/Skip variable, default to Block\n" +
+            "returns success if a child succeeds";
+
         enum Mode { Block, Skip }
 
         public override string[] Params
@@ -355,6 +398,11 @@ namespace ZeptoBt
 
     public class NodeLeafExpression : NodeLeaf
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[$ ! expression] : </b><#ffff00>expression evaluator\n" +
+            "<#00ff00>evaluates expression, variables can be used\n" +
+            "<#00eeff><b>!: </b><#0099ff>evaluate once, if ! leads the expresison the expression is only evaluated once\n";
+
         public override string[] Params
         {
             get => base.Params;
@@ -415,6 +463,12 @@ namespace ZeptoBt
 
     public class NodeLeafActivate : NodeLeaf
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[activate name activate] : </b><#ffff00>activates/deactivates child game object\n" +
+            "<#00ff00>controls activation of child gameobject\n" +
+            "<#00eeff><b>name: </b><#0099ff>child gameobject name, string, default to ''\n" +
+            "<#00eeff><b>activate: </b><#0099ff>activate or deactivate, true/false, default to false\n";
+
         public override string[] Params
         {
             get => base.Params;

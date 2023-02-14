@@ -16,6 +16,7 @@ public class ZeptoBtViewer : MonoBehaviour
     [SerializeField] TMP_Dropdown typeDropdown;
     [SerializeField] TMP_InputField paramsText;
     [SerializeField] TMP_InputField filenameText;
+    [SerializeField] TMP_Text documentationText;
     [SerializeField] Button updateButton;
     [SerializeField] Button saveButton;
     [SerializeField] Button loadButton;
@@ -35,6 +36,8 @@ public class ZeptoBtViewer : MonoBehaviour
     Vector3 viewMoveStartPos;
     Vector3 viewMoveStartMousePos;
     float scale = 1;
+
+    Dictionary<string, string> nodeToDoc = new Dictionary<string, string>();
 
     float nodeSize = 100;
     List<string> history = new List<string>();
@@ -242,6 +245,8 @@ public class ZeptoBtViewer : MonoBehaviour
                     updateButton.interactable = false;
                 }
 
+                documentationText.text = selectedNode.Node.Documentation;
+
                 typeDropdown.interactable = false;
             }
         }
@@ -383,8 +388,10 @@ public class ZeptoBtViewer : MonoBehaviour
 
     public void TypeDropdownValueChanged()
     {
-        dragger.Interactable = typeDropdown.captionText.text != "";
         Debug.Log(typeDropdown.value + " " + typeDropdown.captionText.text);
+        dragger.Interactable = typeDropdown.captionText.text != "";
+        if (nodeToDoc.ContainsKey(typeDropdown.captionText.text))
+            documentationText.text = nodeToDoc[typeDropdown.captionText.text];
     }
 
     public void NodeUpdate()
@@ -524,6 +531,11 @@ public class ZeptoBtViewer : MonoBehaviour
             var data = new TMP_Dropdown.OptionData();
             data.text = kvp.Key;
             typeDropdown.options.Add(data);
+
+            var className = ZeptoBtRegistrar.NameToNode[kvp.Key];
+            Debug.Log($"{kvp.Key} {className}");
+            var node = Activator.CreateInstance(Type.GetType(className));
+            nodeToDoc.Add(kvp.Key, (node as Node).Documentation);
         }
 
         dragger.Interactable = false;

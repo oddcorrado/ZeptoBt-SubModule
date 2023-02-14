@@ -30,7 +30,7 @@ MonoBehaviour:
   - name: successify
     node: ZeptoBt.NodeDecoratorSuccessify
   - name: failify
-    node: ZeptoBt.NodeDecoratorForceFailify
+    node: ZeptoBt.NodeDecoratorFailify
   - name: repeatify
     node: ZeptoBt.NodeDecoratorRepeat
   - name: rowresetify

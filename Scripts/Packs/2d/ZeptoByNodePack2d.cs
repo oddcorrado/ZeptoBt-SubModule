@@ -8,10 +8,10 @@ namespace ZeptoBt
     public class NodeLeafVelocity : NodeLeaf
     {
         public override string Documentation { get; } =
-            "[vel vx vy] : velocity\n" +
-            "Forces the velocity of the object.\n" +
-            "vx: x velocity, float variable, defaults to 0\n" +
-            "vy: y velocity, float variable, defaults to 0\n";
+            "<#ff9900><b>[vel vx vy] :  </b><#ffff00>velocity\n" +
+            "<#00ff00>Forces the velocity of the object.\n" +
+            "<#00eeff><b>vx: </b><#0099ff>x velocity, float variable, defaults to 0\n" +
+            "<#00eeff><b>vy: </b><#0099ff>y velocity, float variable, defaults to 0\n";
 
         public override string[] Params
         {
@@ -67,10 +67,10 @@ namespace ZeptoBt
     public class NodeLeafRoam : NodeLeaf
     {
         public override string Documentation { get; } =
-            "[roam vel radius] : roam\n" +
-            "Roams around spawn position\n" +
-            "vel: roaming velocity, float variable, defaults to 0\n" +
-            "radius: roaming radius, float variable, defaults to 0\n";
+            "<#ff9900><b>[roam vel radius] : </b><#ffff00>roam\n" +
+            "<#00ff00>Roams around spawn position\n" +
+            "<#00eeff><b>vel: </b><#0099ff>roaming velocity, float variable, defaults to 0\n" +
+            "<#00eeff><b>radius: </b><#0099ff>roaming radius, float variable, defaults to 0\n";
         public override string[] Params
         {
             get => base.Params;
@@ -126,11 +126,11 @@ namespace ZeptoBt
     public class NodeLeafProwl : NodeLeaf
     {
         public override string Documentation { get; } =
-            "[prowl target vel radius avel] : prowl\n" +
-            "prowls around an object\n" +
-            "target: any valid trigger target, string, defaults to Player0\n" +
-            "vel: prowling velocity, float variable, defaults to 2\n" +
-            "avel: angular velocity, float variable, defaults to 0.1\n";
+            "<#ff9900><b>[prowl target vel radius avel] : </b><#ffff00>prowl\n" +
+            "<#00ff00>prowls around an object\n" +
+            "<#00eeff><b>target: </b><#0099ff>any valid trigger target, string, defaults to Player0\n" +
+            "<#00eeff><b>vel: </b><#0099ff>prowling velocity, float variable, defaults to 2\n" +
+            "<#00eeff><b>avel: </b><#0099ff>angular velocity, float variable, defaults to 0.1\n";
 
         public override string[] Params
         {
@@ -197,11 +197,11 @@ namespace ZeptoBt
     public class NodeLeafMoveTo : NodeLeaf
     {
         public override string Documentation { get; } =
-            "[moveto vel trigger|x y] : moveto\n" +
-            "moves towards a target (random or object or position) \n" +
-            "target: any valid trigger target, string, defaults to Player0\n" +
-            "x: prowling velocity, float variable, defaults to 2\n" +
-            "y: angular velocity, float variable, defaults to 0.1\n";
+            "<#ff9900><b>[moveto vel trigger|x y] : </b><#ffff00>moveto\n" +
+            "<#00ff00>moves towards a target (random or object or position) \n" +
+            "<#00eeff><b>target: </b><#0099ff>any valid trigger target, string, defaults to Player0\n" +
+            "<#00eeff><b>x: </b><#0099ff>prowling velocity, float variable, defaults to 2\n" +
+            "<#00eeff><b>y: </b><#0099ff>angular velocity, float variable, defaults to 0.1\n";
 
         public override string[] Params
         {
@@ -297,12 +297,12 @@ namespace ZeptoBt
     public class NodeLeafDodge : NodeLeaf
     {
         public override string Documentation { get; } =
-            "[dodge vx vy trigger jump] : dodge\n" +
-            "dodges an incoming threat according to its type\n" +
-            "vx: dodge x velocity, float variable, defaults to 0\n" +
-            "vy: dodge y velocity, float variable, defaults to 0\n" +
-            "target: any valid trigger target, string, defaults to _\n" +
-            "jump: allow jumps when groundedt, true or false, default to false";
+            "<#ff9900><b>[dodge vx vy trigger jump] : </b><#ffff00>dodge\n" +
+            "<#00ff00>dodges an incoming threat according to its type\n" +
+            "<#00eeff><b>vx: </b><#0099ff>dodge x velocity, float variable, defaults to 0\n" +
+            "<#00eeff><b>vy: </b><#0099ff>dodge y velocity, float variable, defaults to 0\n" +
+            "<#00eeff><b>target: </b><#0099ff>any valid trigger target, string, defaults to _\n" +
+            "<#00eeff><b>jump: </b><#0099ff>allow jumps when groundedt, true or false, default to false";
         public override string[] Params
         {
             get => base.Params;
@@ -385,6 +385,11 @@ namespace ZeptoBt
 
     public class NodeLeafScale : NodeLeaf
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[scale sx sy] : </b><#ffff00>moveto\n" +
+            "<#00ff00>scales the loocal scale of the object\n" +
+            "<#00eeff><b>sx: </b><#0099ff>x scale, float variable, defaults to 0\n" +
+            "<#00eeff><b>sy: </b><#0099ff>y scale, float variable, defaults to 0\n";
         public override string[] Params
         {
             get => base.Params;
@@ -432,6 +437,12 @@ namespace ZeptoBt
 
     public class NodeLeafTrigger : NodeLeaf
     {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[trigger target match] : </b><#ffff00>trigger\n" +
+            "<#00ff00>reacts to a trigger value\n" +
+            "<#00eeff><b>target: </b><#0099ff>target trigger name, string, defaults to ''\n" +
+            "<#00eeff><b>match: </b><#0099ff>if true success is returned on target present, true/false, defaults to false\n";
+
         public override string[] Params
         {
             get => base.Params;
