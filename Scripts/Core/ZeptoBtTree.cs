@@ -22,15 +22,20 @@ public class ZeptoBtTree : MonoBehaviour
     public NodeRoot Root { get; set; } = new NodeRoot();
     // public Node CurrentNode { get; set; }
     public float CurrentTime { get; set; }
-    public Rigidbody2D MainBody { get; set; }
+    public Rigidbody2D MainBody2D { get; set; }
+    public Rigidbody MainBody { get; set; }
     public float Vx { get; set; }
     public float Vy { get; set; }
+    public float Vz { get; set; }
     public bool ApplyVx { get; set; }
     public bool ApplyVy { get; set; }
+    public bool ApplyVz { get; set; }
     public float ImpulseVx { get; set; }
     public float ImpulseVy { get; set; }
+    public float ImpulseVz { get; set; }
     public float Sx { set { var ls = transform.localScale; ls.x = value; transform.localScale = ls; } }
     public float Sy { set { var ls = transform.localScale; ls.y = value; transform.localScale = ls; } }
+    public float Sz { set { var ls = transform.localScale; ls.z = value; transform.localScale = ls; } }
     private List<string> animationNames = new List<string>();
     Coroutine[] animationCoroutines = new Coroutine[5];
 
@@ -194,9 +199,10 @@ public class ZeptoBtTree : MonoBehaviour
 
     private IEnumerator Start()
     {
-        MainBody = GetComponent<Rigidbody2D>();
+        MainBody2D = GetComponent<Rigidbody2D>();
+        MainBody = GetComponent<Rigidbody>();
 
-        for(int i = 0; i <  transform.childCount; i++)
+        for (int i = 0; i <  transform.childCount; i++)
             Children.Add(transform.GetChild(i).name, transform.GetChild(i).gameObject);
 
         Root.CurrentNode = Root;
@@ -219,17 +225,38 @@ public class ZeptoBtTree : MonoBehaviour
 
     void FixedUpdate()
     {
-        var vel = MainBody.velocity;
-        if (ApplyVx) vel.x = Vx;
-        if (ApplyVy) vel.y = Vy;
+        if(MainBody2D != null)
+        {
+            var vel = MainBody2D.velocity;
+            if (ApplyVx) vel.x = Vx;
+            if (ApplyVy) vel.y = Vy;
 
-        vel.x += ImpulseVx;
-        vel.y += ImpulseVy;
+            vel.x += ImpulseVx;
+            vel.y += ImpulseVy;
 
-        MainBody.velocity = vel;
+            MainBody2D.velocity = vel;
 
-        ImpulseVx = 0;
-        ImpulseVy = 0;
+            ImpulseVx = 0;
+            ImpulseVy = 0;
+        }
+
+        if (MainBody != null)
+        {
+            var vel = MainBody.velocity;
+            if (ApplyVx) vel.x = Vx;
+            if (ApplyVy) vel.y = Vy;
+            if (ApplyVz) vel.z = Vz;
+
+            vel.x += ImpulseVx;
+            vel.y += ImpulseVy;
+            vel.z += ImpulseVz;
+
+            MainBody.velocity = vel;
+
+            ImpulseVx = 0;
+            ImpulseVy = 0;
+            ImpulseVz = 0;
+        }
     }
     private void TriggerEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
     {

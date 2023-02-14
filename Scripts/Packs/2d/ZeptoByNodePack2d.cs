@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
-namespace ZeptoBt
+namespace ZeptoBt.NodePack2d
 {
     public class NodeLeafVelocity : NodeLeaf
     {

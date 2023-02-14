@@ -124,15 +124,15 @@ namespace ZeptoBt
             return value;
         }
     }
-   
+
     public class NodeRoot : NodeComposite
     {
         public Node CurrentNode { get; set; }
         public ExpressionEvaluator Evaluator { get; set; } = new ExpressionEvaluator();
 
-        public override string Documentation { get; } = 
-            "[root] : Root Node\n" +
-            "First node in the tree, all operations on the tree go trough this node.";
+        public override string Documentation { get; } =
+            "<#ff9900><b>[root] : </b><#ffff00>Root Node\n" +
+            "<#00ff00>First node in the tree, all operations on the tree go trough this node.";
 
         // evaluator.Variables = new Dictionary<string, object>() {};
 

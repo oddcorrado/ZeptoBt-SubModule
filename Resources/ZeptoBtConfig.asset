@@ -36,20 +36,16 @@ MonoBehaviour:
   - name: rowresetify
     node: ZeptoBt.NodeDecoratorRowReset
   - name: vel
-    node: ZeptoBt.NodeLeafVelocity
+    node: ZeptoBt.NodePack2d.NodeLeafVelocity
   - name: trigger
-    node: ZeptoBt.NodeLeafTrigger
+    node: ZeptoBt.NodePack2d.NodeLeafTrigger
   - name: scale
-    node: ZeptoBt.NodeLeafScale
+    node: ZeptoBt.NodePack2d.NodeLeafScale
   - name: moveto
-    node: ZeptoBt.NodeLeafMoveTo
+    node: ZeptoBt.NodePack2d.NodeLeafMoveTo
   - name: roam
-    node: ZeptoBt.NodeLeafRoam
+    node: ZeptoBt.NodePack2d.NodeLeafRoam
   - name: prowl
-    node: ZeptoBt.NodeLeafProwl
+    node: ZeptoBt.NodePack2d.NodeLeafProwl
   - name: dodge
-    node: ZeptoBt.NodeLeafDodge
-  - name: spine
-    node: ZeptoBt.NodeLeafSpine
-  - name: hit
-    node: ZeptoBt.NodeLeafHit
+    node: ZeptoBt.NodePack2d.NodeLeafDodge
