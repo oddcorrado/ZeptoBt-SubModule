@@ -7,7 +7,7 @@ public class ZeptoLineUi : Graphic
 {
     public List<Vector2> Points { get; set; } = new List<Vector2>();
     public float Width { get; set; } = 1;
-    public Color Color { get; set; } = Color.red;
+    public Color Color { get; set; } = Color.white;
 
    protected override void OnPopulateMesh(VertexHelper vh)
     {

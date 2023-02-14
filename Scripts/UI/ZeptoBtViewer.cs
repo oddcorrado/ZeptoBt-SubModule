@@ -145,8 +145,8 @@ public class ZeptoBtViewer : MonoBehaviour
                 var line = Instantiate(lineRendererPrefab, transform);
                 line.transform.position = Vector3.zero;
                 line.transform.SetParent(nodeContainer.transform);
-                line.Points.Add((1 / scale) * new Vector2(vnode.transform.position.x, vnode.transform.position.y - nodeSize * 0.2f));
-                line.Points.Add((1/ scale) * new Vector2(child.ViewNode.transform.position.x, child.ViewNode.transform.position.y + nodeSize * 0.2f));
+                line.Points.Add((1 / scale) * new Vector2(vnode.transform.position.x, vnode.transform.position.y - nodeSize * 0.3f));
+                line.Points.Add((1 / scale) * new Vector2(child.ViewNode.transform.position.x, child.ViewNode.transform.position.y + nodeSize * 0.3f));
                 allChildren.Add(line.gameObject);
                 TraceLinks(child.ViewNode);
             });

@@ -11,6 +11,7 @@ public class ZeptoBtViewNode : MonoBehaviour
     [SerializeField] TMP_Text parametersDisplay;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Image image;
+    [SerializeField] Image focusImage;
 
     public Node Node { get; set; }
     public string ShortName
@@ -35,6 +36,7 @@ public class ZeptoBtViewNode : MonoBehaviour
         {
             if (spriteRenderer != null) spriteRenderer.color = value ? Color.grey : Color.white;
             if (image != null) image.color = value ? Color.grey : Color.white;
+            if (focusImage != null) focusImage.gameObject.SetActive(value);
         }
     }
 

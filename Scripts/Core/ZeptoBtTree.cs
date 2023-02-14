@@ -207,7 +207,7 @@ public class ZeptoBtTree : MonoBehaviour
 
         Root.CurrentNode = Root;
 
-        foreach (var trigger in triggers) trigger.TriggerEnterEvent += TriggerEnter;
+        foreach (var trigger in triggers) trigger.Trigger2DEnterEvent += Trigger2DEnter;
 
         yield return null;
 
@@ -258,7 +258,7 @@ public class ZeptoBtTree : MonoBehaviour
             ImpulseVz = 0;
         }
     }
-    private void TriggerEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
+    private void Trigger2DEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
     {
         if (!TriggerCounts.ContainsKey(triggerType)) TriggerCounts[triggerType] = 0;
         TriggerCounts[triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
