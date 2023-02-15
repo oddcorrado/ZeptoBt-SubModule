@@ -24,6 +24,7 @@ public class ZeptoBtViewer : MonoBehaviour
     [SerializeField] GameObject nodeContainer;
     [SerializeField] GameObject inspector;
     [SerializeField] GameObject overlay;
+    [SerializeField] ZeptoBtOverlay inspectorOver;
 
     public ZeptoBtTree Tree { get; set; }
     List<ZeptoBtViewNode> viewNodes = new List<ZeptoBtViewNode>();
@@ -36,6 +37,7 @@ public class ZeptoBtViewer : MonoBehaviour
     Vector3 viewMoveStartPos;
     Vector3 viewMoveStartMousePos;
     float scale = 1;
+    bool isInInspector;
 
     Dictionary<string, string> nodeToDoc = new Dictionary<string, string>();
 
@@ -198,7 +200,9 @@ public class ZeptoBtViewer : MonoBehaviour
     {
         if (!IsActive) return;
 
-        if (Input.GetMouseButtonDown(0) && Input.mousePosition.x < 1620)
+        isInInspector = typeDropdown.IsExpanded || inspectorOver.IsOverInspector;
+
+        if (Input.GetMouseButtonDown(0) && Input.mousePosition.x < 1620 && !isInInspector)
         {
             if(selectedNode != null) selectedNode.Selected = false;
 
@@ -251,7 +255,7 @@ public class ZeptoBtViewer : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(0) && selectedNode != null && Input.mousePosition.x < 1620)
+        if (Input.GetMouseButton(0) && selectedNode != null && Input.mousePosition.x < 1620 && !isInInspector)
         {
             var mpos = Input.mousePosition;
             selectedNode.transform.position = mpos;
@@ -275,7 +279,7 @@ public class ZeptoBtViewer : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(0) && createdNode != null && Input.mousePosition.x < 1620)
+        if (Input.GetMouseButton(0) && createdNode != null && Input.mousePosition.x < 1620 && !isInInspector)
         {
             var mpos = Input.mousePosition;
             createdNode.transform.position = mpos;
@@ -299,7 +303,7 @@ public class ZeptoBtViewer : MonoBehaviour
             }
         }
 
-        if (selectedNode != null && Input.GetKeyDown(KeyCode.LeftArrow))
+        if (selectedNode != null && Input.GetKeyDown(KeyCode.LeftArrow) && !isInInspector)
         {
             var parent = selectedNode.Node.compositeParent;
             if(parent != null)
@@ -315,7 +319,7 @@ public class ZeptoBtViewer : MonoBehaviour
             }
         }
 
-        if (selectedNode != null && Input.GetKeyDown(KeyCode.RightArrow))
+        if (selectedNode != null && Input.GetKeyDown(KeyCode.RightArrow) && !isInInspector)
         {
             var parent = selectedNode.Node.compositeParent;
             if (parent != null)
@@ -379,7 +383,7 @@ public class ZeptoBtViewer : MonoBehaviour
             transform.position = viewMoveStartPos + (Input.mousePosition - viewMoveStartMousePos);
         }
 
-        if (Mathf.Abs(Input.mouseScrollDelta.y) > 0)
+        if (Mathf.Abs(Input.mouseScrollDelta.y) > 0 && !isInInspector)
         {
             scale += 0.1f * Input.mouseScrollDelta.y;
             transform.localScale = scale * Vector3.one;
