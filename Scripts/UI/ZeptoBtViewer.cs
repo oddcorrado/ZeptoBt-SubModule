@@ -22,6 +22,7 @@ public class ZeptoBtViewer : MonoBehaviour
     [SerializeField] Button loadButton;
     [SerializeField] ZeptoBtDragger dragger;
     [SerializeField] GameObject nodeContainer;
+    [SerializeField] GameObject lineContainer;
     [SerializeField] GameObject inspector;
     [SerializeField] GameObject overlay;
     [SerializeField] ZeptoBtOverlay inspectorOver;
@@ -93,7 +94,9 @@ public class ZeptoBtViewer : MonoBehaviour
         viewNode.transform.localScale = Vector3.one;
         viewNode.Node = node;
         viewNode.Node.ViewNode = viewNode;
-        if(node is NodeComposite)
+        viewNode.ConnectorBot.gameObject.SetActive(!(node is NodeLeaf));
+
+        if (node is NodeComposite)
         {
             (node as NodeComposite).Children.ForEach(child => CreateView(child));
         }
@@ -146,9 +149,9 @@ public class ZeptoBtViewer : MonoBehaviour
             {
                 var line = Instantiate(lineRendererPrefab, transform);
                 line.transform.position = Vector3.zero;
-                line.transform.SetParent(nodeContainer.transform);
-                line.Points.Add((1 / scale) * new Vector2(vnode.transform.position.x, vnode.transform.position.y - nodeSize * 0.3f));
-                line.Points.Add((1 / scale) * new Vector2(child.ViewNode.transform.position.x, child.ViewNode.transform.position.y + nodeSize * 0.3f));
+                line.transform.SetParent(lineContainer.transform);
+                line.Points.Add((1 / scale) * new Vector2(vnode.ConnectorBot.transform.position.x, vnode.ConnectorBot.transform.position.y));
+                line.Points.Add((1 / scale) * new Vector2(child.ViewNode.ConnectorTop.transform.position.x, child.ViewNode.ConnectorTop.transform.position.y));
                 allChildren.Add(line.gameObject);
                 TraceLinks(child.ViewNode);
             });
@@ -485,6 +488,7 @@ public class ZeptoBtViewer : MonoBehaviour
         createdNode.transform.localScale = Vector3.one;
         createdNode.Node = node;
         createdNode.Node.ViewNode = createdNode;
+        createdNode.ConnectorBot.gameObject.SetActive(createdNode.Node is NodeLeaf);
 
         if (selectedNode != null) selectedNode.Selected = false;
         selectedNode = null;

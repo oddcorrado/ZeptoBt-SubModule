@@ -12,7 +12,12 @@ public class ZeptoBtViewNode : MonoBehaviour
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Image image;
     [SerializeField] Image focusImage;
+    [SerializeField] Image connectorTop;
+    [SerializeField] Image connectorBot;
 
+
+    public Image ConnectorTop { get => connectorTop; }
+    public Image ConnectorBot { get => connectorBot; }
     public Node Node { get; set; }
     public string ShortName
     {
@@ -46,10 +51,10 @@ public class ZeptoBtViewNode : MonoBehaviour
         {
             image.color = value switch
             {
-                NodeReturn.Success => Color.green,
-                NodeReturn.Failure => Color.red,
-                NodeReturn.Runnning => Color.cyan,
-                _ => Color.white
+                NodeReturn.Success => new Color(0, 0.6f, 0, 1),
+                NodeReturn.Failure => new Color(0.7f, 0, 0, 1),
+                NodeReturn.Runnning => new Color(0, 0.5f, 0.5f, 1),
+                _ => Color.grey
             };
         }
     }
