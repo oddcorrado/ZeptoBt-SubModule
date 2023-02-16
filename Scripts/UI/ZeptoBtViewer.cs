@@ -40,7 +40,14 @@ public class ZeptoBtViewer : MonoBehaviour
     float scale = 1;
     bool isInInspector;
 
-    Dictionary<string, string> nodeToDoc = new Dictionary<string, string>();
+    class NodeInfo
+    {
+        public string doc;
+        public bool isLeaf;
+        public string defaultParams;
+
+    }
+    Dictionary<string, NodeInfo> nodeToDoc = new Dictionary<string, NodeInfo>();
 
     float nodeSize = 100;
     List<string> history = new List<string>();
@@ -241,7 +248,7 @@ public class ZeptoBtViewer : MonoBehaviour
 
                 if (selectedNode.Node is NodeLeaf)
                 {
-                    paramsText.text = (selectedNode.Node as NodeLeaf).Params.Aggregate("", (a, v) => $"{a} {v}");
+                    paramsText.text = (selectedNode.Node as NodeLeaf).Params.Aggregate("", (a, v) => a == "" ? v : $"{a} {v}");
                     paramsText.interactable = true;
                     updateButton.interactable = true;
                 }
@@ -395,10 +402,16 @@ public class ZeptoBtViewer : MonoBehaviour
 
     public void TypeDropdownValueChanged()
     {
-        Debug.Log(typeDropdown.value + " " + typeDropdown.captionText.text);
         dragger.Interactable = typeDropdown.captionText.text != "";
+        paramsText.text = "";
+
+        updateButton.interactable = false;
         if (nodeToDoc.ContainsKey(typeDropdown.captionText.text))
-            documentationText.text = nodeToDoc[typeDropdown.captionText.text];
+        {
+            documentationText.text = nodeToDoc[typeDropdown.captionText.text].doc;
+            paramsText.interactable = nodeToDoc[typeDropdown.captionText.text].isLeaf;
+        }
+            
     }
 
     public void NodeUpdate()
@@ -528,13 +541,14 @@ public class ZeptoBtViewer : MonoBehaviour
         IsActive = !IsActive;
         inspector.SetActive(IsActive);
         nodeContainer.SetActive(IsActive);
+        lineContainer.SetActive(IsActive);
         overlay.SetActive(IsActive);
     }
     void Start()
     {
         typeDropdown.ClearOptions();
 
-        foreach(var kvp in ZeptoBtRegistrar.NameToNode)
+        foreach (var kvp in ZeptoBtRegistrar.NameToNode)
         {
             var data = new TMP_Dropdown.OptionData();
             data.text = kvp.Key;
@@ -543,9 +557,14 @@ public class ZeptoBtViewer : MonoBehaviour
             var className = ZeptoBtRegistrar.NameToNode[kvp.Key];
             Debug.Log($"{kvp.Key} {className}");
             var node = Activator.CreateInstance(Type.GetType(className));
-            nodeToDoc.Add(kvp.Key, (node as Node).Documentation);
-        }
-
+            nodeToDoc.Add(kvp.Key,
+                new NodeInfo()
+                {
+                    doc = (node as Node).Documentation,
+                    isLeaf = node is NodeLeaf
+                });
+        }    
+        
         dragger.Interactable = false;
         typeDropdown.onValueChanged.AddListener((i) => TypeDropdownValueChanged());
     }
