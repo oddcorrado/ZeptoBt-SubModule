@@ -36,8 +36,8 @@ public class ZeptoBtTree : MonoBehaviour
     public float Sx { set { var ls = transform.localScale; ls.x = value; transform.localScale = ls; } }
     public float Sy { set { var ls = transform.localScale; ls.y = value; transform.localScale = ls; } }
     public float Sz { set { var ls = transform.localScale; ls.z = value; transform.localScale = ls; } }
-    private List<string> animationNames = new List<string>();
-    Coroutine[] animationCoroutines = new Coroutine[5];
+    protected List<string> animationNames = new List<string>();
+    protected Coroutine[] animationCoroutines = new Coroutine[5];
 
     public Dictionary<string, int> TriggerCounts { get; set; } = new Dictionary<string, int>();
     public class TriggerObject
@@ -161,7 +161,7 @@ public class ZeptoBtTree : MonoBehaviour
             }
         });
     }
-    IEnumerator Ticker()
+    protected IEnumerator Ticker()
     {
         while (true)
         {
@@ -170,7 +170,7 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
-    void CrossTree()
+    protected void CrossTree()
     {
         // Debug.Log($"BT ***** CROSS TREE");
         int inIndex = Root.CurrentNode.Index;
@@ -183,7 +183,7 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
-    void CheckForEvents(Node node)
+    protected void CheckForEvents(Node node)
     {
         if (node.GetType() == typeof(NodeLeaf))
         {
@@ -197,7 +197,7 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
-    private IEnumerator Start()
+    protected IEnumerator Start()
     {
         MainBody2D = GetComponent<Rigidbody2D>();
         MainBody = GetComponent<Rigidbody>();
@@ -218,12 +218,12 @@ public class ZeptoBtTree : MonoBehaviour
         StartCoroutine(Ticker());
     }
 
-    void Update()
+    protected void Update()
     {
         CurrentTime = Time.time;
     }
 
-    void FixedUpdate()
+    protected void FixedUpdate()
     {
         if(MainBody2D != null)
         {
@@ -258,7 +258,7 @@ public class ZeptoBtTree : MonoBehaviour
             ImpulseVz = 0;
         }
     }
-    private void Trigger2DEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
+    protected void Trigger2DEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
     {
         if (!TriggerCounts.ContainsKey(triggerType)) TriggerCounts[triggerType] = 0;
         TriggerCounts[triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
