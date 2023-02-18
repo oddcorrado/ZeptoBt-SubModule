@@ -25,6 +25,8 @@ namespace ZeptoBt
 
         public virtual string Documentation { get; } = "Put your doc here";
 
+        public string Comment { get; set; } = "";
+
         public int Index { get; set; }
 
         public ZeptoBtTree Tree { get; set; }

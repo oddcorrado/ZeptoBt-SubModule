@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ZeptoBt;
+using System.Text.RegularExpressions;
+
 #if SPINE
 using Spine.Unity;
 #endif
@@ -92,12 +94,29 @@ public class ZeptoBtTree : MonoBehaviour
                     closestParentComposite = parentNodes[i] as NodeComposite;
 
             string[] datas = line.Substring(depth).Split(" ");
-            string[] parameters = new string[datas.Length - 1];
-            Array.Copy(datas, 1, parameters, 0, datas.Length - 1);
+            string[] parameters;
+
+            Regex rx = new(@"\[(.*)\]");
+            string comment = "";
+            if (datas.Length > 1 && rx.IsMatch(datas[1]))
+            {
+                var match = rx.Match(datas[1]);
+                comment = match.Groups[1].Value;
+                parameters = new string[datas.Length - 2];
+                Array.Copy(datas, 2, parameters, 0, datas.Length - 2);
+            }
+            else
+            {
+                parameters = new string[datas.Length - 1];
+                Array.Copy(datas, 1, parameters, 0, datas.Length - 1);
+            }
+
+
             switch (datas[0])
             {
                 case "?":
                     NodeSelector selector = new NodeSelector();
+                    selector.Comment = comment;
 
                     selector.compositeParent = closestParentComposite;
                     selector.Index = nodeIndex++;
@@ -114,6 +133,8 @@ public class ZeptoBtTree : MonoBehaviour
 
                 case ">":
                     NodeSequence sequence = new NodeSequence();
+                    sequence.Comment = comment;
+
                     sequence.compositeParent = closestParentComposite;
                     sequence.Index = nodeIndex++;
                     sequence.Root = Root;
@@ -133,6 +154,7 @@ public class ZeptoBtTree : MonoBehaviour
                     if(node is NodeLeaf)
                     {
                         var leaf = node as NodeLeaf;
+                        leaf.Comment = comment;
 
                         leaf.Index = nodeIndex++;
                         leaf.compositeParent = closestParentComposite;
@@ -149,6 +171,7 @@ public class ZeptoBtTree : MonoBehaviour
                     if (node is NodeDecorator)
                     {
                         NodeDecorator decorator = node as NodeDecorator;
+                        decorator.Comment = comment;
                         decorator.Index = nodeIndex++;
                         decorator.compositeParent = closestParentComposite; // check me
                         decorator.Tree = this;

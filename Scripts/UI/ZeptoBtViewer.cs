@@ -16,6 +16,7 @@ public class ZeptoBtViewer : MonoBehaviour
     [SerializeField] Canvas canvas;
     [SerializeField] TMP_Dropdown typeDropdown;
     [SerializeField] TMP_InputField paramsText;
+    [SerializeField] TMP_InputField commentText;
     [SerializeField] TMP_InputField filenameText;
     [SerializeField] TMP_Text documentationText;
     [SerializeField] TMP_Text variablesText;
@@ -41,6 +42,7 @@ public class ZeptoBtViewer : MonoBehaviour
     Vector3 viewMoveStartMousePos;
     float scale = 1;
     bool isInInspector;
+    bool isEditingText;
 
     class NodeInfo
     {
@@ -109,6 +111,8 @@ public class ZeptoBtViewer : MonoBehaviour
         ZeptoBtViewNode viewNode = Instantiate(viewNodePrefab);
 
         if (node is NodeLeaf) viewNode.Parameters = (node as NodeLeaf).Params.Aggregate("", (a,v) => $"{a} {v}");
+        viewNode.Comment = node.Comment;
+
         var shortName = "???";
         foreach(var kvp in ZeptoBtRegistrar.NameToNode)
         {
@@ -220,9 +224,20 @@ public class ZeptoBtViewer : MonoBehaviour
         for (int i = 0; i < depth; i++) str += "-";
         str += shortName;
 
+        if (node.Comment != "") str += $" [{node.Comment}]";
         if (node is NodeLeaf) str += (node as NodeLeaf).Params.Aggregate("", (a, v) => $"{a} {v}");
         if (node is NodeComposite) str += (node as NodeComposite).Children.Aggregate("", (a, v) => a + StringifyNode(v, depth + 1));
         return str;
+    }
+
+    public void StartTextEdit()
+    {
+        isEditingText = true;
+    }
+
+    public void StopTextEdit()
+    {
+        isEditingText = false;
     }
     void Update()
     {
@@ -267,12 +282,14 @@ public class ZeptoBtViewer : MonoBehaviour
                 if (selectedNode.Node is NodeLeaf)
                 {
                     paramsText.text = (selectedNode.Node as NodeLeaf).Params.Aggregate("", (a, v) => a == "" ? v : $"{a} {v}");
+                    commentText.text = selectedNode.Node.Comment;
                     paramsText.interactable = true;
                     updateButton.interactable = true;
                 }
                 else
                 {
                     paramsText.text = "";
+                    commentText.text = "";
                     paramsText.interactable = false;
                     updateButton.interactable = false;
                 }
@@ -331,7 +348,7 @@ public class ZeptoBtViewer : MonoBehaviour
             }
         }
 
-        if (selectedNode != null && Input.GetKeyDown(KeyCode.Delete))
+        if (selectedNode != null && Input.GetKeyDown(KeyCode.Delete) && !isEditingText)
         {
             NodeDelete();
         }
@@ -427,6 +444,7 @@ public class ZeptoBtViewer : MonoBehaviour
     {
         dragger.Interactable = typeDropdown.captionText.text != "";
         paramsText.text = "";
+        // commentText.text = "";
 
         updateButton.interactable = false;
         if (nodeToDoc.ContainsKey(typeDropdown.captionText.text))
@@ -437,14 +455,19 @@ public class ZeptoBtViewer : MonoBehaviour
             
     }
 
-    public void NodeUpdate()
+    public void NodeUpdateParams()
     {
-        Debug.Log("Update " + paramsText.text);
         (selectedNode.Node as NodeLeaf).Params = paramsText.text.Split(" ");
-        Reset();
+        selectedNode.Parameters = paramsText.text;
     }
 
-    Node CreateNode(string type, string parameters)
+    public void NodeUpdateComment()
+    {
+        selectedNode.Node.Comment = commentText.text;
+        selectedNode.Comment = commentText.text;
+    }
+
+    Node CreateNode(string type, string parameters, string comment)
     {
         var className = ZeptoBtRegistrar.NameToNode[type];
         var node = Activator.CreateInstance(Type.GetType(className));
@@ -480,6 +503,7 @@ public class ZeptoBtViewer : MonoBehaviour
             // decorator.Init();
         }
 
+        (node as Node).Comment = comment;
         return node as Node;
     }
 
@@ -517,7 +541,7 @@ public class ZeptoBtViewer : MonoBehaviour
     {
         createdNode = Instantiate(viewNodePrefab);
 
-        Node node = CreateNode(typeDropdown.captionText.text, paramsText.text);
+        Node node = CreateNode(typeDropdown.captionText.text, paramsText.text, commentText.text);
 
         createdNode.ShortName = node.ToString();
         createdNode.transform.SetParent(transform, false);

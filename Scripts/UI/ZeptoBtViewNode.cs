@@ -9,6 +9,7 @@ public class ZeptoBtViewNode : MonoBehaviour
 {
     [SerializeField] TMP_Text shortNameDisplay;
     [SerializeField] TMP_Text parametersDisplay;
+    [SerializeField] TMP_Text commentsDisplay;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Image image;
     [SerializeField] Image focusImage;
@@ -32,6 +33,14 @@ public class ZeptoBtViewNode : MonoBehaviour
         set
         {
             parametersDisplay.text = value;
+        }
+    }
+
+    public string Comment
+    {
+        set
+        {
+            commentsDisplay.text = value;
         }
     }
 
