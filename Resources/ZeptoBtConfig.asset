@@ -49,3 +49,5 @@ MonoBehaviour:
     node: ZeptoBt.NodePack2d.NodeLeafProwl
   - name: dodge
     node: ZeptoBt.NodePack2d.NodeLeafDodge
+  - name: thresholdify
+    node: ZeptoBt.NodeDecoratorThreshold

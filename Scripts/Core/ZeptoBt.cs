@@ -23,6 +23,8 @@ namespace ZeptoBt
         public NodeComposite compositeParent;
         public NodeRoot Root { get; set; }
 
+        public virtual string[] Params { get; set; }
+
         public virtual string Documentation { get; } = "Put your doc here";
 
         public string Comment { get; set; } = "";
@@ -190,8 +192,6 @@ namespace ZeptoBt
             NodeReturn nr = ZeptoBtAction.Tick();
             Status = nr;
         }
-
-        public virtual string[] Params { get; set; }
 
         public virtual void Abort()
         { }

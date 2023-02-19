@@ -15,7 +15,12 @@ public class ZeptoBtViewNode : MonoBehaviour
     [SerializeField] Image focusImage;
     [SerializeField] Image connectorTop;
     [SerializeField] Image connectorBot;
+    [SerializeField] Color successColor = new Color(0, 0.6f, 0, 1);
+    [SerializeField] Color failColor = new Color(0.7f, 0, 0, 1);
+    [SerializeField] Color runColor = new Color(0, 0.5f, 0.5f, 1);
+    [SerializeField] Color unprocessedColor = new Color(0.5f, 0.5f, 0.5f, 1);
 
+    Color targetColor;
 
     public Image ConnectorTop { get => connectorTop; }
     public Image ConnectorBot { get => connectorBot; }
@@ -58,13 +63,18 @@ public class ZeptoBtViewNode : MonoBehaviour
     {
         set
         {
-            image.color = value switch
+            targetColor = value switch
             {
-                NodeReturn.Success => new Color(0, 0.6f, 0, 1),
-                NodeReturn.Failure => new Color(0.7f, 0, 0, 1),
-                NodeReturn.Runnning => new Color(0, 0.5f, 0.5f, 1),
-                _ => Color.grey
+                NodeReturn.Success => successColor,
+                NodeReturn.Failure => failColor,
+                NodeReturn.Runnning => runColor,
+                _ => unprocessedColor
             };
         }
+    }
+
+    void Update()
+    {
+        image.color = targetColor; // (1 - Time.deltaTime) * image.color + Time.deltaTime * targetColor;
     }
 }

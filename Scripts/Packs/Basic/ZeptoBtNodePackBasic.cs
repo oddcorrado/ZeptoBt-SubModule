@@ -168,7 +168,7 @@ namespace ZeptoBt
     {
         public override string Documentation { get; } =
             "<#ff9900><b>[repeatify] : </b><#ffff00>repeats child if it returns success\n" +
-            "<#00ff00>if the child returns succes it resets the child";
+            "<#00ff00>if the child returns success it resets the child";
 
         public override void Tick()
         {
@@ -189,6 +189,80 @@ namespace ZeptoBt
         }
     }
 
+    public class NodeDecoratorThreshold : NodeDecorator
+    {
+        public override string Documentation { get; } =
+            "<#ff9900><b>[thresholdify thresholds] : </b><#ffff00>detects child thresold\n" +
+            "<#00ff00>returns success only when the child crosses a threshold\n" +
+            "<#00eeff><b>thresholds: </b><#0099ff>three characters that encode thresholds that are detected for success/failure/run. " +
+            "Each character can be [T]o, [F]rom, [B]oth, [N]one.\n" +
+            "For example 'TFN' will trigger when going to success and when coming from failure.\n" +
+            "String variable, defaults to TNN\n";
+
+        private NodeParam<string> thresholds = new NodeParam<string>("tnn");
+        private NodeReturn previousChildState = NodeReturn.Unprocessed;
+
+        public override string[] Params
+        {
+            get => base.Params;
+            set
+            {
+                base.Params = value;
+
+                if (base.Params.Length > 0) thresholds.Set(base.Params[0]);
+            }
+        }
+
+        public override void Tick()
+        {
+            if (Children.Count != 1)
+            {
+                Status = NodeReturn.Success;
+                return;
+            }
+
+            Children[0].Tick();
+
+            if (Children[0].Status == previousChildState)
+            {
+                Status = NodeReturn.Failure;
+                return;
+            }
+
+            var th = thresholds.Get(Root.Evaluator);
+ 
+            if (th.Length != 3)
+            {
+                Status = NodeReturn.Failure;
+                return;
+            }
+
+            th = th.ToLower();
+
+            switch (Children[0].Status)
+            {
+                case NodeReturn.Success:
+                    if (th[0] == 't' || th[0] == 'b') Status = NodeReturn.Success;
+                    if (previousChildState == NodeReturn.Failure && (th[1] == 'f' || th[0] == 'b')) Status = NodeReturn.Success;
+                    if (previousChildState == NodeReturn.Runnning && (th[2] == 'f' || th[0] == 'b')) Status = NodeReturn.Success;
+                    break;
+                case NodeReturn.Failure:
+                    if (previousChildState == NodeReturn.Success && (th[0] == 'f' || th[0] == 'b')) Status = NodeReturn.Success;
+                    if (th[1] == 't' || th[0] == 'b') Status = NodeReturn.Success;
+                    if (previousChildState == NodeReturn.Runnning && (th[2] == 'f' || th[0] == 'b')) Status = NodeReturn.Success;
+                    break;
+                case NodeReturn.Runnning:
+                    if (previousChildState == NodeReturn.Success && (th[0] == 'f' || th[0] == 'b')) Status = NodeReturn.Success;
+                    if (previousChildState == NodeReturn.Success && (th[1] == 'f' || th[0] == 'b')) Status = NodeReturn.Success;
+                    if (th[2] == 't' || th[0] == 'b') Status = NodeReturn.Success;
+                    break;
+                default: Status = NodeReturn.Failure; break;
+            }
+
+            previousChildState = Children[0].Status;
+        }
+    }
+
     public class NodeSequence : NodeComposite
     {
         public override string Documentation { get; } =
@@ -196,6 +270,7 @@ namespace ZeptoBt
             "<#00ff00>executes child in sequence, whenever a child fails fails\n" +
             "returns wait if a child wait\n" +
             "returns success if all children succeed";
+
 
         public override void Tick()
         {

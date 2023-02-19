@@ -121,6 +121,7 @@ public class ZeptoBtTree : MonoBehaviour
                     selector.compositeParent = closestParentComposite;
                     selector.Index = nodeIndex++;
                     selector.Root = Root;
+                    selector.Params = parameters;
                     selector.Tree = this;
 
                     parentNodes.Add(selector);
@@ -138,6 +139,7 @@ public class ZeptoBtTree : MonoBehaviour
                     sequence.compositeParent = closestParentComposite;
                     sequence.Index = nodeIndex++;
                     sequence.Root = Root;
+                    sequence.Params = parameters;
                     sequence.Tree = this;
 
                     parentNodes.Add(sequence);
@@ -176,6 +178,7 @@ public class ZeptoBtTree : MonoBehaviour
                         decorator.compositeParent = closestParentComposite; // check me
                         decorator.Tree = this;
                         decorator.Root = Root;
+                        decorator.Params = parameters;
                         parentNodes.Add(decorator);
                         decorator.Init();
                     }

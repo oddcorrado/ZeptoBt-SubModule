@@ -47,7 +47,6 @@ public class ZeptoBtViewer : MonoBehaviour
     class NodeInfo
     {
         public string doc;
-        public bool isLeaf;
         public string defaultParams;
     }
     Dictionary<string, NodeInfo> nodeToDoc = new Dictionary<string, NodeInfo>();
@@ -110,7 +109,7 @@ public class ZeptoBtViewer : MonoBehaviour
     {
         ZeptoBtViewNode viewNode = Instantiate(viewNodePrefab);
 
-        if (node is NodeLeaf) viewNode.Parameters = (node as NodeLeaf).Params.Aggregate("", (a,v) => $"{a} {v}");
+        viewNode.Parameters = (node as Node).Params?.Aggregate("", (a,v) => $"{a} {v}");
         viewNode.Comment = node.Comment;
 
         var shortName = "???";
@@ -225,7 +224,7 @@ public class ZeptoBtViewer : MonoBehaviour
         str += shortName;
 
         if (node.Comment != "") str += $" [{node.Comment}]";
-        if (node is NodeLeaf) str += (node as NodeLeaf).Params.Aggregate("", (a, v) => $"{a} {v}");
+        if (node is NodeLeaf) str += (node as Node).Params.Aggregate("", (a, v) => $"{a} {v}");
         if (node is NodeComposite) str += (node as NodeComposite).Children.Aggregate("", (a, v) => a + StringifyNode(v, depth + 1));
         return str;
     }
@@ -279,21 +278,11 @@ public class ZeptoBtViewer : MonoBehaviour
                 var index = typeDropdown.options.FindIndex(o => o.text == nodeType);
                 if (index != -1) typeDropdown.value = index;
 
-                if (selectedNode.Node is NodeLeaf)
-                {
-                    paramsText.text = (selectedNode.Node as NodeLeaf).Params.Aggregate("", (a, v) => a == "" ? v : $"{a} {v}");
-                    commentText.text = selectedNode.Node.Comment;
-                    paramsText.interactable = true;
-                    updateButton.interactable = true;
-                }
-                else
-                {
-                    paramsText.text = "";
-                    commentText.text = "";
-                    paramsText.interactable = false;
-                    updateButton.interactable = false;
-                }
-
+                paramsText.text = (selectedNode.Node as Node).Params?.Aggregate("", (a, v) => a == "" ? v : $"{a} {v}");
+                commentText.text = selectedNode.Node.Comment;
+                paramsText.interactable = true;
+                updateButton.interactable = true;
+                
                 documentationText.text = selectedNode.Node.Documentation;
 
                 typeDropdown.interactable = false;
@@ -450,14 +439,13 @@ public class ZeptoBtViewer : MonoBehaviour
         if (nodeToDoc.ContainsKey(typeDropdown.captionText.text))
         {
             documentationText.text = nodeToDoc[typeDropdown.captionText.text].doc;
-            paramsText.interactable = nodeToDoc[typeDropdown.captionText.text].isLeaf;
         }
             
     }
 
     public void NodeUpdateParams()
     {
-        (selectedNode.Node as NodeLeaf).Params = paramsText.text.Split(" ");
+        (selectedNode.Node as Node).Params = paramsText.text.Split(" ");
         selectedNode.Parameters = paramsText.text;
     }
 
@@ -607,8 +595,7 @@ public class ZeptoBtViewer : MonoBehaviour
             nodeToDoc.Add(kvp.Key,
                 new NodeInfo()
                 {
-                    doc = (node as Node).Documentation,
-                    isLeaf = node is NodeLeaf
+                    doc = (node as Node).Documentation
                 });
         }    
         
