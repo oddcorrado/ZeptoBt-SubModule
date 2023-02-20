@@ -34,27 +34,36 @@ public class ZeptoBtViewNode : MonoBehaviour
     public Image ConnectorTop { get => connectorTop; }
     public Image ConnectorBot { get => connectorBot; }
     public Node Node { get; set; }
+    private string shortName;
     public string ShortName
     {
+        get => shortName;
         set
         {
+            shortName = value;
             shortNameDisplay.text = value;
         }
     }
 
+    private string parameters;
     public string Parameters
     {
+        get => parameters;
         set
         {
             parametersDisplay.text = value;
+            parameters = value;
         }
     }
 
+    private string comment;
     public string Comment
     {
+        get => comment;
         set
         {
             commentsDisplay.text = value;
+            comment = value;
         }
     }
 

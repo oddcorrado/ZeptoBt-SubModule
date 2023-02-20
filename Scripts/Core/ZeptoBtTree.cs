@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ZeptoBt;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 #if SPINE
 using Spine.Unity;
@@ -41,6 +42,9 @@ public class ZeptoBtTree : MonoBehaviour
     protected List<string> animationNames = new List<string>();
     protected Coroutine[] animationCoroutines = new Coroutine[5];
 
+    protected List<Node> nodes = new List<Node>();  
+
+    protected ZeptoBtQuickNodeViewUi zeptoBtQuickNodeViewUi;
     public Dictionary<string, int> TriggerCounts { get; set; } = new Dictionary<string, int>();
     public class TriggerObject
     {
@@ -71,6 +75,7 @@ public class ZeptoBtTree : MonoBehaviour
         Root.Root = Root;
         Root.Index = nodeIndex++;
         Root.Children = new List<Node>();
+        nodes = new List<Node>();
 
         lines.ForEach(line =>
         {
@@ -123,6 +128,7 @@ public class ZeptoBtTree : MonoBehaviour
                     selector.Root = Root;
                     selector.Params = parameters;
                     selector.Tree = this;
+                    nodes.Add(selector);
 
                     parentNodes.Add(selector);
                     parentNodes.Add(selector);
@@ -141,6 +147,7 @@ public class ZeptoBtTree : MonoBehaviour
                     sequence.Root = Root;
                     sequence.Params = parameters;
                     sequence.Tree = this;
+                    nodes.Add(sequence);
 
                     parentNodes.Add(sequence);
                     (parentNode as NodeComposite).Children.Add(sequence);
@@ -164,6 +171,7 @@ public class ZeptoBtTree : MonoBehaviour
                         leaf.Root = Root;
                         leaf.Params = parameters;
                         leaf.Init();
+                        nodes.Add(leaf);
                     }
 
                     (parentNode as NodeComposite).Children.Add(node as Node);
@@ -181,6 +189,7 @@ public class ZeptoBtTree : MonoBehaviour
                         decorator.Params = parameters;
                         parentNodes.Add(decorator);
                         decorator.Init();
+                        nodes.Add(decorator);
                     }
 
                     break;
@@ -203,6 +212,20 @@ public class ZeptoBtTree : MonoBehaviour
         Root.Tick();
 
         int outIndex = Root.CurrentNode.Index;
+        if(zeptoBtQuickNodeViewUi != null)
+        {
+            string shortName = "";
+            foreach (var kvp in ZeptoBtRegistrar.NameToNode)
+            {
+                if (kvp.Value == Root.CurrentNode.GetType().ToString()) shortName = kvp.Key;
+            }
+            // FIXME optimize
+            zeptoBtQuickNodeViewUi.Tick(
+                shortName,
+                Root.CurrentNode.Params?.Aggregate("", (a, v) => $"{a} {v}"),
+                Root.CurrentNode.Comment,
+                Root.CurrentNode.Status);
+        }
         if (outIndex < inIndex && Root.CurrentNode.GetType() == typeof(NodeLeaf))
         {
             Root.Abort(outIndex);
@@ -240,6 +263,8 @@ public class ZeptoBtTree : MonoBehaviour
         ReadData();
 
         CreateTree();
+
+        zeptoBtQuickNodeViewUi = GetComponentInChildren<ZeptoBtQuickNodeViewUi>();
 
         StartCoroutine(Ticker());
     }

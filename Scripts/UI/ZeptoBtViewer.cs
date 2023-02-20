@@ -44,6 +44,11 @@ public class ZeptoBtViewer : MonoBehaviour
     bool isInInspector;
     bool isEditingText;
 
+    public bool IsQuickViewActive { get; set; }
+
+    public delegate void quickViewModeDelegate(bool isOn);
+    public event quickViewModeDelegate quickViewModeEvent;
+
     class NodeInfo
     {
         public string doc;
@@ -578,6 +583,12 @@ public class ZeptoBtViewer : MonoBehaviour
         nodeContainer.SetActive(IsActive);
         lineContainer.SetActive(IsActive);
         overlay.SetActive(IsActive);
+    }
+
+    public void ToggleQuickView()
+    {
+        IsQuickViewActive = !IsQuickViewActive;
+        quickViewModeEvent?.Invoke(IsQuickViewActive);
     }
     void Start()
     {

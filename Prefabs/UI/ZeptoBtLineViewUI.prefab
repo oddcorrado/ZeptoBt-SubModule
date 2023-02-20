@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8949206749417364284}
   - component: {fileID: 3411455827340760721}
   m_Layer: 5
-  m_Name: LineViewUI
+  m_Name: ZeptoBtLineViewUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
