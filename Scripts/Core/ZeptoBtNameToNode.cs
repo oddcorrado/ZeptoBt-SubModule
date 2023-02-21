@@ -21,6 +21,7 @@ public class ZeptoBtNameToNode : ScriptableObject
         foreach(var nameToNode in nameToNodes)
         {
             ZeptoBtRegistrar.NameToNode.Add(nameToNode.name, nameToNode.node);
+            ZeptoBtRegistrar.NodeToName.Add(nameToNode.node, nameToNode.name);
         }
         Debug.Log("ZeptoBtNameToNode done");
     }

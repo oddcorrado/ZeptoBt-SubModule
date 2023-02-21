@@ -8,6 +8,7 @@ namespace ZeptoBt
     public class ZeptoBtRegistrar
     {
         static public Dictionary<string, string> NameToNode { get; set; } = new Dictionary<string, string>();
+        static public Dictionary<string, string> NodeToName { get; set; } = new Dictionary<string, string>();
 
         static ZeptoBtRegistrar()
         {

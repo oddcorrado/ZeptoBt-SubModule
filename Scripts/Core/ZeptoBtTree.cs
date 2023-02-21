@@ -209,22 +209,29 @@ public class ZeptoBtTree : MonoBehaviour
     {
         // Debug.Log($"BT ***** CROSS TREE");
         int inIndex = Root.CurrentNode.Index;
+        if(zeptoBtQuickNodeViewUi != null && zeptoBtQuickNodeViewUi.IsActive)
+            nodes.ForEach(n => n.Status = NodeReturn.Unprocessed);
+
         Root.Tick();
 
         int outIndex = Root.CurrentNode.Index;
-        if(zeptoBtQuickNodeViewUi != null)
+        if(zeptoBtQuickNodeViewUi != null && zeptoBtQuickNodeViewUi.IsActive)
         {
-            string shortName = "";
-            foreach (var kvp in ZeptoBtRegistrar.NameToNode)
+            Node node = Root;
+
+            nodes.ForEach(n =>
             {
-                if (kvp.Value == Root.CurrentNode.GetType().ToString()) shortName = kvp.Key;
-            }
+                if (n.Index > node.Index && n.Status != NodeReturn.Unprocessed) 
+                    node = n;
+            });
+
+            Debug.Log($"QV ${name} ${node}");
             // FIXME optimize
             zeptoBtQuickNodeViewUi.Tick(
-                shortName,
-                Root.CurrentNode.Params?.Aggregate("", (a, v) => $"{a} {v}"),
-                Root.CurrentNode.Comment,
-                Root.CurrentNode.Status);
+                ZeptoBtRegistrar.NodeToName[node.GetType().ToString()],
+                node.Params?.Aggregate("", (a, v) => $"{a} {v}"),
+                node.Comment,
+                node.Status);
         }
         if (outIndex < inIndex && Root.CurrentNode.GetType() == typeof(NodeLeaf))
         {
