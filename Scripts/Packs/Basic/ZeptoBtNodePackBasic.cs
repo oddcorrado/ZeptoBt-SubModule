@@ -275,13 +275,16 @@ namespace ZeptoBt
         public override void Tick()
         {
             int i = 0;
-            // Debug.Log($"BT TICK - {this}");
+
+            if (Root == null) return;
+
             while (i < children.Count)
             {
                 Children[i].Tick();
                 var childReturn = Children[i].Status;
                 if (childReturn == NodeReturn.Runnning)
                 {
+
                     Root.CurrentNode = Children[i];
                     Status = childReturn;
                     return;
