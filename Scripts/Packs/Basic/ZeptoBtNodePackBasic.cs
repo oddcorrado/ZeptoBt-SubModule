@@ -276,7 +276,11 @@ namespace ZeptoBt
         {
             int i = 0;
 
-            if (Root == null) return;
+            if (Root == null)
+            {
+                Debug.LogError("Root is null");
+                return;
+            }
 
             while (i < children.Count)
             {

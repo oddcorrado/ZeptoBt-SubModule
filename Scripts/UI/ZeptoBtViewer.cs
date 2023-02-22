@@ -71,6 +71,7 @@ public class ZeptoBtViewer : MonoBehaviour
                 (Root as NodeRoot).Evaluator.ExpressionEvaluated -= VariableUpdate;
             root = value;
             Tree = root.Tree;
+            Debug.Log("WA");
             history = new List<string>();
             if(Root != null)
                 (Root as NodeRoot).Evaluator.ExpressionEvaluated += VariableUpdate;
@@ -571,6 +572,7 @@ public class ZeptoBtViewer : MonoBehaviour
     public void NodeLoad()
     {
         string data = Fili.ReadAllText(filenameText.text);
+        Debug.Log($"TREE {Tree == null} {Tree.FileData == null}");
         Tree.FileData = data;
         Tree.CreateTree();
         Reset(false);
