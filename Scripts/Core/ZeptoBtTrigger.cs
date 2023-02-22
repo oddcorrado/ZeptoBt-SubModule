@@ -50,10 +50,10 @@ public class ZeptoBtTrigger : MonoBehaviour
     {
         foreach (var trigger in triggers)
         {
-            /*
+/*
             if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
                 && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
-            */
+*/
             if (trigger.name == other.name || trigger.tag == other.tag)
             {
                 Trigger3DEnterEvent?.Invoke(trigger.type, TriggerEvent.Enter, other);
