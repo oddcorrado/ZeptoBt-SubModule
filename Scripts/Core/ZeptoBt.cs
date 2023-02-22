@@ -151,7 +151,8 @@ namespace ZeptoBt
                 });
             }
 
-            Children[0].Tick();
+            if(Children.Count > 0)
+                Children[0].Tick();
             Status = NodeReturn.Runnning;
             OnExit(CurrentNode.Status);
         }

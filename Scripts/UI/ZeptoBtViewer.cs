@@ -42,7 +42,7 @@ public class ZeptoBtViewer : MonoBehaviour
     Vector3 viewMoveStartMousePos;
     float scale = 1;
     bool isInInspector;
-    bool isEditingText;
+    public bool IsEditingText { get; set; }
 
     public bool IsQuickViewActive { get; set; }
 
@@ -236,12 +236,12 @@ public class ZeptoBtViewer : MonoBehaviour
 
     public void StartTextEdit()
     {
-        isEditingText = true;
+        IsEditingText = true;
     }
 
     public void StopTextEdit()
     {
-        isEditingText = false;
+        IsEditingText = false;
     }
     void Update()
     {
@@ -342,7 +342,7 @@ public class ZeptoBtViewer : MonoBehaviour
             }
         }
 
-        if (selectedNode != null && Input.GetKeyDown(KeyCode.Delete) && !isEditingText)
+        if (selectedNode != null && Input.GetKeyDown(KeyCode.Delete) && !IsEditingText)
         {
             NodeDelete();
         }
@@ -450,14 +450,20 @@ public class ZeptoBtViewer : MonoBehaviour
 
     public void NodeUpdateParams()
     {
-        (selectedNode.Node as Node).Params = paramsText.text.Split(" ");
-        selectedNode.Parameters = paramsText.text;
+        if(selectedNode != null)
+        {
+            (selectedNode.Node as Node).Params = paramsText?.text?.Split(" ");
+            selectedNode.Parameters = paramsText.text;
+        }
     }
 
     public void NodeUpdateComment()
     {
-        selectedNode.Node.Comment = commentText.text;
-        selectedNode.Comment = commentText.text;
+        if(selectedNode != null)
+        {
+            selectedNode.Node.Comment = commentText.text;
+            selectedNode.Comment = commentText.text;
+        }
     }
 
     Node CreateNode(string type, string parameters, string comment)
