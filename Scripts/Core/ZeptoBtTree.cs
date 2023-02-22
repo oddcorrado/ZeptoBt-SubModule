@@ -14,8 +14,8 @@ using Spine.Unity;
 // tree extension (new Node classes)
 public class ZeptoBtTree : MonoBehaviour
 {
-    [SerializeField] string filename;
-    [SerializeField] ZeptoBtTrigger[] triggers;
+    [SerializeField] protected string filename;
+    [SerializeField] protected ZeptoBtTrigger[] triggers;
 #if SPINE
     [SerializeField] SkeletonAnimation spineAnimation;
     [SerializeField] LifeManager lifeManager;
@@ -253,7 +253,7 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
-    protected IEnumerator Start()
+    protected virtual IEnumerator Start()
     {
         MainBody2D = GetComponent<Rigidbody2D>();
         MainBody = GetComponent<Rigidbody>();
@@ -264,6 +264,7 @@ public class ZeptoBtTree : MonoBehaviour
         Root.CurrentNode = Root;
 
         foreach (var trigger in triggers) trigger.Trigger2DEnterEvent += Trigger2DEnter;
+
 
         yield return null;
 
@@ -278,6 +279,7 @@ public class ZeptoBtTree : MonoBehaviour
 
     protected void Update()
     {
+        //Debug.Log(TriggerCounts.Count);
         CurrentTime = Time.time;
     }
 
@@ -325,9 +327,10 @@ public class ZeptoBtTree : MonoBehaviour
             TriggerObjects.Add(new TriggerObject() { gameObject = other.gameObject, type = triggerType });
         else
             TriggerObjects.RemoveAll(to => to.gameObject == other.gameObject);
-       CrossTree();
+        CrossTree();
     }
 
+  
     public GameObject GetTriggerObject(string type)
     {
         var to = TriggerObjects.Find(to => to.type == type);
