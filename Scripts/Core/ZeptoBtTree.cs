@@ -66,9 +66,32 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
+    public void UpdateIndexes()
+    {
+        nodes = new List<Node>();
+        UpdateIndexes(Root, 0);
+    }
+
+    private int UpdateIndexes(Node node, int index)
+    {
+        int localIndex = index;
+        
+        node.Index = localIndex++;
+        nodes.Add(node);
+
+        if(node is NodeComposite)
+        {
+            (node as NodeComposite).Children.ForEach(child =>
+            {
+                localIndex = UpdateIndexes(child, localIndex);
+            });
+        }
+
+        return localIndex;
+    }
     public void CreateTree()
     {
-        var lines = new List<string>(FileData.Split('\n'));
+        var lines = FileData == null ? new List<string>() { } : new List<string>(FileData.Split('\n'));
         List<Node> parentNodes = new List<Node>() { Root };
         int nodeIndex = 0;
         Root.Tree = this;

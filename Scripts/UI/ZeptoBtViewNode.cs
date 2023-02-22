@@ -10,6 +10,7 @@ public class ZeptoBtViewNode : MonoBehaviour
     [SerializeField] TMP_Text shortNameDisplay;
     [SerializeField] TMP_Text parametersDisplay;
     [SerializeField] TMP_Text commentsDisplay;
+    [SerializeField] TMP_Text indexDisplay;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Image image;
     [SerializeField] Image imageSuccessPerturbation;
@@ -53,6 +54,17 @@ public class ZeptoBtViewNode : MonoBehaviour
         {
             parametersDisplay.text = value;
             parameters = value;
+        }
+    }
+
+    private int index;
+    public int Index
+    {
+        get => index;
+        set
+        {
+            indexDisplay.text = value.ToString();
+            index = value;
         }
     }
 

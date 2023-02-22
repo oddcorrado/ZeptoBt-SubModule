@@ -117,6 +117,7 @@ public class ZeptoBtViewer : MonoBehaviour
 
         viewNode.Parameters = (node as Node).Params?.Aggregate("", (a,v) => $"{a} {v}");
         viewNode.Comment = node.Comment;
+        viewNode.Index = node.Index;
 
         var shortName = "???";
         foreach(var kvp in ZeptoBtRegistrar.NameToNode)
@@ -514,8 +515,8 @@ public class ZeptoBtViewer : MonoBehaviour
         {
             var leaf = node as NodeLeaf;
             // leaf.Index = nodeIndex++;
-            leaf.Tree = Root.Tree;
-            leaf.Root = Root.Root;
+            // leaf.Tree = Root.Tree;
+            // leaf.Root = Root.Root;
             Debug.Log($"dd {leaf} Root={leaf.Root}");
             leaf.Init();
         }
@@ -534,8 +535,14 @@ public class ZeptoBtViewer : MonoBehaviour
             // decorator.Init();
         }
 
+        node.Root = Root.Root;
+        node.Tree = Root.Tree;
+        Root.Tree.UpdateIndexes();
+
         allChildren.Add(createdNode.gameObject);
         viewNodes.Add(createdNode);
+
+        viewNodes.ForEach(vNode => vNode.Index = vNode.Node.Index);
     }
     public void DragNode()
     {
@@ -577,6 +584,7 @@ public class ZeptoBtViewer : MonoBehaviour
 
     public void NodeLoad()
     {
+        if (Tree == null) return;
         string data = Fili.ReadAllText(filenameText.text);
         Debug.Log($"TREE {Tree == null} {Tree.FileData == null}");
         Tree.FileData = data;

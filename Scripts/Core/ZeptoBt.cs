@@ -18,6 +18,20 @@ namespace ZeptoBt
     public enum NodeReturn { Failure, Runnning, Success, Unprocessed }
     public delegate void ForceTickDelegate();
 
+    public class DocParameter
+    {
+        public string name;
+        public string description;
+        public bool isEvaluated;
+        public string defaultValue;
+    }
+    public class Doc
+    {
+        public string name;
+        public DocParameter[] parameters;
+        public string description;
+        public string prototype;
+    }
     public class Node
     {
         public NodeComposite compositeParent;
@@ -26,6 +40,7 @@ namespace ZeptoBt
         public virtual string[] Params { get; set; }
 
         public virtual string Documentation { get; } = "Put your doc here";
+        public virtual Doc Doc { get; } = new Doc() { name = "none", description = "write your doc !!!" };
 
         public string Comment { get; set; } = "";
 
