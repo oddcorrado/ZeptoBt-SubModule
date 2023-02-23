@@ -601,6 +601,10 @@ public class ZeptoBtViewer : MonoBehaviour
         overlay.SetActive(IsActive);
     }
 
+    public void OnFilenameValueChanged(string filename)
+    {
+        Debug.Log(">>> " + filename + " " + filename[filename.Length - 1] == "\n");
+    }
     public void ToggleQuickView()
     {
         IsQuickViewActive = !IsQuickViewActive;
