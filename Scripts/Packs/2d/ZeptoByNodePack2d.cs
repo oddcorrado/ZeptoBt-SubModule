@@ -13,6 +13,18 @@ namespace ZeptoBt.NodePack2d
             "<#00eeff><b>vx: </b><#0099ff>x velocity, float variable, defaults to 0\n" +
             "<#00eeff><b>vy: </b><#0099ff>y velocity, float variable, defaults to 0\n";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "vel",
+            description = "Forces the velocity of the object.",
+            prototype = "vel [vx] [vy]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "vx", description = "x velocity", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "vy", description = "y velocity", isEvaluated = true, defaultValue = "0" },
+            }
+        };
+
         public override string[] Params
         {
             get => base.Params;
@@ -71,6 +83,19 @@ namespace ZeptoBt.NodePack2d
             "<#00ff00>Roams around spawn position\n" +
             "<#00eeff><b>vel: </b><#0099ff>roaming velocity, float variable, defaults to 0\n" +
             "<#00eeff><b>radius: </b><#0099ff>roaming radius, float variable, defaults to 0\n";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "roam",
+            description = "Roams around spawn position",
+            prototype = "roam [vel] [radius]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "vel", description = "roaming velocity", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "radius", description = "roaming radius", isEvaluated = true, defaultValue = "0" },
+            }
+        };
+
         public override string[] Params
         {
             get => base.Params;
@@ -131,6 +156,20 @@ namespace ZeptoBt.NodePack2d
             "<#00eeff><b>target: </b><#0099ff>any valid trigger target, string, defaults to Player0\n" +
             "<#00eeff><b>vel: </b><#0099ff>prowling velocity, float variable, defaults to 2\n" +
             "<#00eeff><b>avel: </b><#0099ff>angular velocity, float variable, defaults to 0.1\n";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "prowl",
+            description = "prowls around a target",
+            prototype = "prowl [target] [vel] [radius] [angular_vel]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "target", description = "any valid trigger target", isEvaluated = true, defaultValue = "Player" },
+                new DocParameter() { name = "vel", description = "prowling velocity", isEvaluated = true, defaultValue = "2" },
+                new DocParameter() { name = "radius", description = "prowling radius", isEvaluated = true, defaultValue = "3" },
+                new DocParameter() { name = "radius", description = "prowling angular velocity", isEvaluated = true, defaultValue = "0.1" }
+            }
+        };
 
         public override string[] Params
         {
@@ -203,6 +242,19 @@ namespace ZeptoBt.NodePack2d
             "<#00eeff><b>x: </b><#0099ff>prowling velocity, float variable, defaults to 2\n" +
             "<#00eeff><b>y: </b><#0099ff>angular velocity, float variable, defaults to 0.1\n";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "moveto",
+            description = "moves towards a target (random or object or position)",
+            prototype = "moveto [vel] [trigger | x] [y]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "vel", description = "moveto velocity", isEvaluated = true, defaultValue = "2" },
+                new DocParameter() { name = "target", description = "any valid trigger target", isEvaluated = true, defaultValue = "Player" },
+                new DocParameter() { name = "x", description = "x", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "y", description = "y", isEvaluated = true, defaultValue = "0" }
+            }
+        };
         public override string[] Params
         {
             get => base.Params;
@@ -303,6 +355,20 @@ namespace ZeptoBt.NodePack2d
             "<#00eeff><b>vy: </b><#0099ff>dodge y velocity, float variable, defaults to 0\n" +
             "<#00eeff><b>target: </b><#0099ff>any valid trigger target, string, defaults to _\n" +
             "<#00eeff><b>jump: </b><#0099ff>allow jumps when groundedt, true or false, default to false";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "dodge",
+            description = "dodges an incoming threat according to its type",
+            prototype = "dodge [vx] [vy] [target] [jump]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "vx", description = "dodge x vel", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "vy", description = "dodge y vel", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "target", description = "any valid trigger target", isEvaluated = true, defaultValue = "Player" },
+                new DocParameter() { name = "jump", description = "allow jumps when groundedt", isEvaluated = true, defaultValue = "false" }
+            }
+        };
         public override string[] Params
         {
             get => base.Params;
@@ -390,6 +456,19 @@ namespace ZeptoBt.NodePack2d
             "<#00ff00>scales the loocal scale of the object\n" +
             "<#00eeff><b>sx: </b><#0099ff>x scale, float variable, defaults to 0\n" +
             "<#00eeff><b>sy: </b><#0099ff>y scale, float variable, defaults to 0\n";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "scale",
+            description = "scales the local scale of the object",
+            prototype = "scale [sx] [sy]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "sx", description = "x scale", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "sy", description = "yscale", isEvaluated = true, defaultValue = "0" }
+            }
+        };
+
         public override string[] Params
         {
             get => base.Params;
@@ -443,6 +522,17 @@ namespace ZeptoBt.NodePack2d
             "<#00eeff><b>target: </b><#0099ff>target trigger name, string, defaults to ''\n" +
             "<#00eeff><b>match: </b><#0099ff>if true success is returned on target present, true/false, defaults to false\n";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "trigger",
+            description = "reacts to a trigger value",
+            prototype = "trigger [target] [match]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "target", description = "any valid trigger target", isEvaluated = false, defaultValue = "Player" },
+                new DocParameter() { name = "match", description = "if true success is returned on target present", isEvaluated = false, defaultValue = "false" }
+            }
+        };
         public override string[] Params
         {
             get => base.Params;

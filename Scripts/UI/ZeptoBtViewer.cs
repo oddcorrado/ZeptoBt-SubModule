@@ -29,6 +29,7 @@ public class ZeptoBtViewer : MonoBehaviour
     [SerializeField] GameObject inspector;
     [SerializeField] GameObject overlay;
     [SerializeField] ZeptoBtOverlay inspectorOver;
+    [SerializeField] ZeptoBtDoc doc;
 
     public ZeptoBtTree Tree { get; set; }
     List<ZeptoBtViewNode> viewNodes = new List<ZeptoBtViewNode>();
@@ -54,7 +55,8 @@ public class ZeptoBtViewer : MonoBehaviour
         public string doc;
         public string defaultParams;
     }
-    Dictionary<string, NodeInfo> nodeToDoc = new Dictionary<string, NodeInfo>();
+    Dictionary<string, NodeInfo> nodeToDocumentation = new Dictionary<string, NodeInfo>();
+    Dictionary<string, Doc> nodeToDoc = new Dictionary<string, Doc>();
 
     float nodeSize = 100;
     List<string> history = new List<string>();
@@ -291,6 +293,7 @@ public class ZeptoBtViewer : MonoBehaviour
                 updateButton.interactable = true;
                 
                 documentationText.text = selectedNode.Node.Documentation;
+                doc.Doc = selectedNode.Node.Doc;
 
                 typeDropdown.interactable = false;
             }
@@ -443,11 +446,14 @@ public class ZeptoBtViewer : MonoBehaviour
         // commentText.text = "";
 
         updateButton.interactable = false;
+        if (nodeToDocumentation.ContainsKey(typeDropdown.captionText.text))
+        {
+            documentationText.text = nodeToDocumentation[typeDropdown.captionText.text].doc;
+        }
         if (nodeToDoc.ContainsKey(typeDropdown.captionText.text))
         {
-            documentationText.text = nodeToDoc[typeDropdown.captionText.text].doc;
+            doc.Doc = nodeToDoc[typeDropdown.captionText.text];
         }
-            
     }
 
     public void NodeUpdateParams()
@@ -623,11 +629,12 @@ public class ZeptoBtViewer : MonoBehaviour
             var className = ZeptoBtRegistrar.NameToNode[kvp.Key];
             Debug.Log($"{kvp.Key} {className}");
             var node = Activator.CreateInstance(Type.GetType(className));
-            nodeToDoc.Add(kvp.Key,
+            nodeToDocumentation.Add(kvp.Key,
                 new NodeInfo()
                 {
                     doc = (node as Node).Documentation
                 });
+            nodeToDoc.Add(kvp.Key, (node as Node).Doc);
         }    
         
         dragger.Interactable = false;

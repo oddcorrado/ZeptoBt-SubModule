@@ -15,6 +15,14 @@ namespace ZeptoBt
         public override string Documentation { get; } =
             "<#ff9900><b>[invertify] : </b><#ffff00>invert decorator\n" +
             "<#00ff00>inverts the result of the child node";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "invertify",
+            description = "inverts the result of the child node",
+            prototype = "invertify",
+            parameters = new DocParameter[] { }
+        };
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -39,6 +47,15 @@ namespace ZeptoBt
         public override string Documentation { get; } =
             "<#ff9900><b>[successify] : </b><#ffff00>force success decorator\n" +
             "<#00ff00>always returns success whether the child execution succeeds or fails";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "successify",
+            description = "always returns success whether the child execution succeeds or fails",
+            prototype = "successify",
+            parameters = new DocParameter[] { }
+        };
+
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -57,6 +74,14 @@ namespace ZeptoBt
         public override string Documentation { get; } =
             "<#ff9900><b>[failify] : </b><#ffff00>force success decorator\n" +
             "<#00ff00>always returns faillure whether the child execution succeeds or fails";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "failify",
+            description = "always returns faillure whether the child execution succeeds or fails",
+            prototype = "failify",
+            parameters = new DocParameter[] { }
+        };
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -74,6 +99,14 @@ namespace ZeptoBt
         public override string Documentation { get; } =
             "<#ff9900><b>[onceify] : </b><#ffff00>executes child only once\n" +
             "<#00ff00>executes child once, returns succes once child has executed";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "onceify",
+            description = "executes child once, returns succes once child has executed",
+            prototype = "onceify",
+            parameters = new DocParameter[] { }
+        };
 
         public override void Tick()
         {
@@ -101,6 +134,15 @@ namespace ZeptoBt
         public override string Documentation { get; } =
             "<#ff9900><b>[gatify] : </b><#ffff00>executes child only once it has returned success\n" +
             "<#00ff00>executes child once, returns success once child has executed with success";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "gatify",
+            description = "executes child once, returns success once child has executed with success",
+            prototype = "gatify",
+            parameters = new DocParameter[] { }
+        };
+
         protected override void OnExit(NodeReturn exitEvent)
         {
             done = false;
@@ -136,6 +178,14 @@ namespace ZeptoBt
             "<#ff9900><b>[rowresetify] : </b><#ffff00>executes child once until row has reset\n" +
             "<#00ff00>executes child once, resets if a previous node fails or wait";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "rowresetify",
+            description = "executes child once, resets if a previous node fails or wait",
+            prototype = "rowresetify",
+            parameters = new DocParameter[] { }
+        };
+
         protected override void OnExit(NodeReturn exitEvent)
         {
             if (Root.CurrentNode.Index < Index)
@@ -170,6 +220,14 @@ namespace ZeptoBt
             "<#ff9900><b>[repeatify] : </b><#ffff00>repeats child if it returns success\n" +
             "<#00ff00>if the child returns success it resets the child";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "repeatify",
+            description = "if the child returns success it resets the child",
+            prototype = "repeatify",
+            parameters = new DocParameter[] { }
+        };
+
         public override void Tick()
         {
             if (Children.Count != 1)
@@ -198,6 +256,26 @@ namespace ZeptoBt
             "Each character can be [T]o, [F]rom, [B]oth, [N]one.\n" +
             "For example 'TFN' will trigger when going to success and when coming from failure.\n" +
             "String variable, defaults to TNN\n";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "thresholdify [thresholds]",
+            description = "returns success only when the child crosses a threshold\n",
+            prototype = "wait [timeout] [mode]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter()
+                {
+                    name = "thresholds",
+                    description = "three characters that encode thresholds that are detected for success/failure/run. " +
+                        "Each character can be [T]o, [F]rom, [B]oth, [N]one.\n" +
+                        "For example 'TFN' will trigger when going to success and when coming from failure.",
+                    isEvaluated = true,
+                    defaultValue = "TNN" 
+                }
+            }
+        };
+
 
         private NodeParam<string> thresholds = new NodeParam<string>("tnn");
         private NodeReturn previousChildState = NodeReturn.Unprocessed;
@@ -271,6 +349,15 @@ namespace ZeptoBt
             "returns wait if a child wait\n" +
             "returns success if all children succeed";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = ">",
+            description = "executes child in sequence, whenever a child fails fails\n" +
+                "returns wait if a child wait\n" +
+                "returns success if all children succeed",
+            prototype = ">",
+            parameters = new DocParameter[] { }
+        };
 
         public override void Tick()
         {
@@ -336,6 +423,17 @@ namespace ZeptoBt
             "<#00ff00>executes child in sequence, whenever a child fails tries the next\n" +
             "returns wait if a child wait\n" +
             "returns success if a child succeeds";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "?",
+            description = ">executes child in sequence, whenever a child fails tries the next\n" +
+                "returns wait if a child wait\n" +
+                "returns success if a child succeeds",
+            prototype = "?",
+            parameters = new DocParameter[] { }
+        };
+
         public override void Tick()
         {
             int i = 0;
@@ -390,6 +488,18 @@ namespace ZeptoBt
             "<#00eeff><b>timeout: </b><#0099ff>timeout before success, float variable, default to 0\n" +
             "<#00eeff><b>mode: </b><#0099ff>Block timer does not reset / Skip timer is reset at success, Block/Skip variable, default to Block\n" +
             "returns success if a child succeeds";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "wait",
+            description = "returns wait until timeout expires, timeout can be reset with tree abort",
+            prototype = "wait [timeout] [mode]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "timeout", description = "timeout before success", isEvaluated = true, defaultValue = "0" },
+                new DocParameter() { name = "mode", description = "Block => timer does not reset *OR* Skip => timer is reset at success", isEvaluated = true, defaultValue = "Block" },
+            }
+        };
 
         enum Mode { Block, Skip }
 
@@ -485,6 +595,18 @@ namespace ZeptoBt
             "<#00ff00>evaluates expression, variables can be used\n" +
             "<#00eeff><b>!: </b><#0099ff>evaluate once, if ! leads the expresison the expression is only evaluated once\n";
 
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "$",
+            description = "evaluates expression, variables can be used",
+            prototype = "$ [!] [expression]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "!", description = "evaluate once, if ! leads the expresison the expression is only evaluated once", isEvaluated = false, defaultValue = "" },
+                new DocParameter() { name = "expression", description = "the expression to  be evaluated", isEvaluated = false, defaultValue = "" },
+            }
+        };
+
         public override string[] Params
         {
             get => base.Params;
@@ -550,6 +672,18 @@ namespace ZeptoBt
             "<#00ff00>controls activation of child gameobject\n" +
             "<#00eeff><b>name: </b><#0099ff>child gameobject name, string, default to ''\n" +
             "<#00eeff><b>activate: </b><#0099ff>activate or deactivate, true/false, default to false\n";
+
+        public override Doc Doc { get; } = new Doc()
+        {
+            name = "activate",
+            description = "controls activation of child gameobject",
+            prototype = "activate [name] [is_active]",
+            parameters = new DocParameter[]
+            {
+                new DocParameter() { name = "name", description = "child gameobject name", isEvaluated = false, defaultValue = "" },
+                new DocParameter() { name = "is_active", description = "boolean that sets the child gameobject active or not (true or false)", isEvaluated = false, defaultValue = "false" },
+            }
+        };
 
         public override string[] Params
         {
