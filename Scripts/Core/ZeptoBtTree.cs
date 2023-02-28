@@ -16,6 +16,7 @@ public class ZeptoBtTree : MonoBehaviour
 {
     [SerializeField] protected string filename;
     [SerializeField] protected ZeptoBtTrigger[] triggers;
+    [SerializeField] protected float velocitySmoothing; 
 #if SPINE
     [SerializeField] SkeletonAnimation spineAnimation;
     [SerializeField] LifeManager lifeManager;
@@ -300,19 +301,20 @@ public class ZeptoBtTree : MonoBehaviour
         StartCoroutine(Ticker());
     }
 
-    protected void Update()
+    protected void UpdateXX()
     {
         //Debug.Log(TriggerCounts.Count);
         CurrentTime = Time.time;
     }
 
-    protected void FixedUpdate()
+    protected void Update()
     {
-        if(MainBody2D != null)
+        CurrentTime = Time.time;
+        if (MainBody2D != null)
         {
             var vel = MainBody2D.velocity;
-            if (ApplyVx) vel.x = Vx;
-            if (ApplyVy) vel.y = Vy;
+            if (ApplyVx) vel.x = vel.x * 0.95f + Vx * 0.05f;
+            if (ApplyVy) vel.y = vel.y * 0.95f + Vy * 0.05f;
 
             vel.x += ImpulseVx;
             vel.y += ImpulseVy;
@@ -326,9 +328,12 @@ public class ZeptoBtTree : MonoBehaviour
         if (MainBody != null)
         {
             var vel = MainBody.velocity;
-            if (ApplyVx) vel.x = Vx;
-            if (ApplyVy) vel.y = Vy;
-            if (ApplyVz) vel.z = Vz;
+            if(vel.magnitude > 1) transform.rotation = Quaternion.LookRotation(new Vector3(vel.x, 0, vel.z)); // rotation
+            Debug.Log($"rot={transform.rotation.eulerAngles} vel={vel}");
+
+            if (ApplyVx) vel.x = vel.x * velocitySmoothing + Vx * (1 - velocitySmoothing);
+            if (ApplyVy) vel.y = vel.y * velocitySmoothing + Vy * (1 - velocitySmoothing);
+            if (ApplyVz) vel.z = vel.z * velocitySmoothing + Vz * (1 - velocitySmoothing);
 
             vel.x += ImpulseVx;
             vel.y += ImpulseVy;
