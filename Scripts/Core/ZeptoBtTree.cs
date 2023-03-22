@@ -307,7 +307,7 @@ public class ZeptoBtTree : MonoBehaviour
         CurrentTime = Time.time;
     }
 
-    protected void Update()
+    protected virtual void Update()
     {
         CurrentTime = Time.time;
         if (MainBody2D != null)

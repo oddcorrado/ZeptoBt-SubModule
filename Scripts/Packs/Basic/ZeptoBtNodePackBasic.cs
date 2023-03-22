@@ -647,7 +647,7 @@ namespace ZeptoBt
             /// if(Root.Evaluator.Variables.ContainsKey("zzz"))
             /// Debug.Log($"BT EVAL before zzz={Root.Evaluator.Variables["zzz"]}");
             /// 
-            Debug.Log("EXP " + expression);
+            //Debug.Log("EXP " + expression);
             var result = Root.Evaluator.Evaluate(expression);
 
             // Debug.Log($"BT TICK - {this} result={result}");

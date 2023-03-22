@@ -73,7 +73,6 @@ public class ZeptoBtViewer : MonoBehaviour
                 (Root as NodeRoot).Evaluator.ExpressionEvaluated -= VariableUpdate;
             root = value;
             Tree = root.Tree;
-            Debug.Log("WA");
             history = new List<string>();
             if(Root != null)
                 (Root as NodeRoot).Evaluator.ExpressionEvaluated += VariableUpdate;
@@ -86,7 +85,7 @@ public class ZeptoBtViewer : MonoBehaviour
         var str = "";
         foreach (var kvp in (Root as NodeRoot).Evaluator.Variables)
         {
-            Debug.Log($"{kvp.Key} = {kvp.Value}");
+            //Debug.Log($"{kvp.Key} = {kvp.Value}");
             str += $"<#00aaff><b>{kvp.Key}</b><#ffffff> = <#00ffff>{kvp.Value}\n";
         }
         variablesText.text = str;
