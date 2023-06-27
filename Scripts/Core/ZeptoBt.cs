@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CodingSeb.ExpressionEvaluator;
 using System;
 using UnityEngine;
@@ -134,7 +134,7 @@ namespace ZeptoBt
                 }
             }
         }
-        public T Get(ExpressionEvaluator evaluator)
+        public T Get(CodingSeb.ExpressionEvaluator.ExpressionEvaluator evaluator)
         {
             if(isVar && evaluator.Variables.ContainsKey(name))
             {
@@ -147,7 +147,7 @@ namespace ZeptoBt
     public class NodeRoot : NodeComposite
     {
         public Node CurrentNode { get; set; }
-        public ExpressionEvaluator Evaluator { get; set; } = new ExpressionEvaluator();
+        public CodingSeb.ExpressionEvaluator.ExpressionEvaluator Evaluator { get; set; } = new CodingSeb.ExpressionEvaluator.ExpressionEvaluator();
 
         public override string Documentation { get; } =
             "<#ff9900><b>[root] : </b><#ffff00>Root Node\n" +
