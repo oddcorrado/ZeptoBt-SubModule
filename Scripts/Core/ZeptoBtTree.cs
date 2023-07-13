@@ -64,6 +64,9 @@ public class ZeptoBtTree : MonoBehaviour
         {
             // Debug.Log($" READING CSV ./Data/{filename}");
             FileData = Fili.ReadAllText($"{filename}");
+        } else if (Fili.DevFileExists($"{filename}"))
+        {
+            FileData = Fili.ReadAllTextDev($"{filename}");
         }
     }
 

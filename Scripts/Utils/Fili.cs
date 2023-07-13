@@ -17,6 +17,10 @@ public class Fili
 #endif
     }
 
+    static public string ReadAllTextDev(string path)
+    {
+        return File.ReadAllText($"./Assets/_Developpers/Agents/{path}");
+    }
     static public bool FileExists(string path)
     {
 #if UNITY_ANDROID
@@ -26,6 +30,12 @@ public class Fili
         return File.Exists($"./Data/{path}");
 #endif
     }
+
+    static public bool DevFileExists(string path)
+    {
+        return File.Exists($"./Assets/_Developpers/Agents/{path}");
+    }
+
 
     static public string[] GetAllFiles(string path)
     {
