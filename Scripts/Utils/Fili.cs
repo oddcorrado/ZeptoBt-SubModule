@@ -13,7 +13,7 @@ public class Fili
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         return BetterStreamingAssets.ReadAllText($"{path}");
 #else
-        return File.ReadAllText($"./Data/{path}");
+        return File.ReadAllText($"./BTTrees/{path}");
 #endif
     }
 
@@ -23,7 +23,7 @@ public class Fili
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         return BetterStreamingAssets.FileExists($"/{path}");
 #else
-        return File.Exists($"./Data/{path}");
+        return File.Exists($"./BTTrees/{path}");
 #endif
     }
 
@@ -34,9 +34,9 @@ public class Fili
         Debug.Log($"GetAllFiles {path}");
         return BetterStreamingAssets.GetFiles($"/{path}");
 #else
-        var files = Directory.GetFiles($"./Data/{path}");
+        var files = Directory.GetFiles($"./BTTrees/{path}");
         for (int i = 0; i < files.Length; i++)
-            files[i] = files[i].Replace("\\", "/").Replace("//", "/").Replace("./Data/", "");
+            files[i] = files[i].Replace("\\", "/").Replace("//", "/").Replace("./BTTrees/", "");
         return files;
 #endif
     }
@@ -47,7 +47,7 @@ public class Fili
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         File.WriteAllText($"{Application.persistentDataPath}/{path}", data);
 #else
-        File.WriteAllText($"./Data/{path}", data);
+        File.WriteAllText($"./BTTrees/{path}", data);
 #endif
     }
 }
