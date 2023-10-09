@@ -22,7 +22,7 @@ public class ZeptoBtTree : MonoBehaviour
     [SerializeField] LifeManager lifeManager;
 #endif
 
-    public float TickPeriod { get; set; } = 0.1f;
+    public float TickPeriod { get; set; } = 1f;
     public NodeRoot Root { get; set; } = new NodeRoot();
     // public Node CurrentNode { get; set; }
     public float CurrentTime { get; set; }
@@ -292,7 +292,6 @@ public class ZeptoBtTree : MonoBehaviour
 
         foreach (var trigger in triggers) trigger.Trigger2DEnterEvent += Trigger2DEnter;
 
-
         yield return null;
 
         ReadData();
@@ -351,13 +350,16 @@ public class ZeptoBtTree : MonoBehaviour
     }
     protected void Trigger2DEnter(string triggerType, ZeptoBtTrigger.TriggerEvent triggerEvent, Collider2D other)
     {
-        if (!TriggerCounts.ContainsKey(triggerType)) TriggerCounts[triggerType] = 0;
-        TriggerCounts[triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
-        Debug.Log($"TRIGGER {triggerType} {TriggerCounts[triggerType]}");
-        if (triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter)
-            TriggerObjects.Add(new TriggerObject() { gameObject = other.gameObject, type = triggerType });
-        else
-            TriggerObjects.RemoveAll(to => to.gameObject == other.gameObject);
+        if (triggerEvent != ZeptoBtTrigger.TriggerEvent.Stay)
+        {
+            if (!TriggerCounts.ContainsKey(triggerType)) TriggerCounts[triggerType] = 0;
+            TriggerCounts[triggerType] += triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter ? 1 : -1;
+            Debug.Log($"TRIGGER {triggerType} {TriggerCounts[triggerType]}");
+            if (triggerEvent == ZeptoBtTrigger.TriggerEvent.Enter)
+                TriggerObjects.Add(new TriggerObject() { gameObject = other.gameObject, type = triggerType });
+            else
+                TriggerObjects.RemoveAll(to => to.gameObject == other.gameObject);
+        }
         CrossTree();
     }
 

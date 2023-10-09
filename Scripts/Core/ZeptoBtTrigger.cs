@@ -11,8 +11,9 @@ public class ZeptoBtTrigger : MonoBehaviour
         public string tag;
         public string type;
     }
-    public enum TriggerEvent { Enter, Exit }
+    public enum TriggerEvent { Enter, Exit, Stay }
     [SerializeField] Trigger[] triggers;
+    [SerializeField] bool continuousStayCheck;
 
     public delegate void Trigger2DEnterDelegate(string triggerType, TriggerEvent triggEvent, Collider2D other);
     public event Trigger2DEnterDelegate Trigger2DEnterEvent;
@@ -28,7 +29,19 @@ public class ZeptoBtTrigger : MonoBehaviour
                 && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
             {
                 Trigger2DEnterEvent?.Invoke(trigger.type, TriggerEvent.Enter, other);
-                // return;
+            }
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (!continuousStayCheck) return;
+        foreach (var trigger in triggers)
+        {
+            if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
+                && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
+            {
+                Trigger2DEnterEvent?.Invoke(trigger.type, TriggerEvent.Stay, other);
             }
         }
     }
@@ -41,7 +54,6 @@ public class ZeptoBtTrigger : MonoBehaviour
                 && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
             {
                 Trigger2DEnterEvent?.Invoke(trigger.type, TriggerEvent.Exit, other);
-                // return;
             }
         }
     }
@@ -50,28 +62,32 @@ public class ZeptoBtTrigger : MonoBehaviour
     {
         foreach (var trigger in triggers)
         {
-/*
-            if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
-                && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
-*/
             if (trigger.name == other.name || trigger.tag == other.tag)
             {
                 Trigger3DEnterEvent?.Invoke(trigger.type, TriggerEvent.Enter, other);
-                // return;
             }
         }
     }
 
+    void OnTriggerStay(Collider other)
+    {
+        if (!continuousStayCheck) return;
+        foreach (var trigger in triggers)
+        {
+            if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
+                && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))
+            {
+                Trigger3DEnterEvent?.Invoke(trigger.type, TriggerEvent.Stay, other);
+            }
+        }
+    }
     void OnTriggerExit(Collider other)
     {
         foreach (var trigger in triggers)
-        {/*
-            if ((trigger.name == null || trigger.name == "" || trigger.name == other.name)
-                && (trigger.tag == null || trigger.tag == "" || trigger.tag == other.tag))*/
+        {
             if (trigger.name == other.name || trigger.tag == other.tag)
             {
                 Trigger3DEnterEvent?.Invoke(trigger.type, TriggerEvent.Exit, other);
-                // return;
             }
         }
     }
