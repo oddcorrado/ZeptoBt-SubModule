@@ -9,11 +9,14 @@ public class Fili
 
     static public string ReadAllText(string path)
     {
+        Debug.LogError($"TREE ReadAllText {path}");
 #if UNITY_ANDROID
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         return BetterStreamingAssets.ReadAllText($"{path}");
-#else
+#elif UNITY_EDITOR
         return File.ReadAllText($"./Data/{path}");
+#else
+        return File.ReadAllText($"./TheGoodDrive_Data/StreamingAssets/BTTrees/{path}");
 #endif
     }
 
@@ -22,8 +25,10 @@ public class Fili
 #if UNITY_ANDROID
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         return BetterStreamingAssets.FileExists($"/{path}");
-#else
+#elif UNITY_EDITOR             
         return File.Exists($"./Data/{path}");
+#else
+        return File.Exists($"./TheGoodDrive_Data/StreamingAssets/BTTrees/{path}");
 #endif
     }
 
