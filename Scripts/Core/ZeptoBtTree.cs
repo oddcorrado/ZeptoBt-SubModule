@@ -22,7 +22,7 @@ public class ZeptoBtTree : MonoBehaviour
     [SerializeField] LifeManager lifeManager;
 #endif
 
-    public float TickPeriod { get; set; } = 1f;
+    public float TickPeriod { get; set; } = 0.1f;
     public NodeRoot Root { get; set; } = new NodeRoot();
     // public Node CurrentNode { get; set; }
     public float CurrentTime { get; set; }

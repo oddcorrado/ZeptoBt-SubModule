@@ -32,7 +32,7 @@ public class ZeptoBtTrigger : MonoBehaviour
             }
         }
     }
-
+/*
     void OnTriggerStay2D(Collider2D other)
     {
         if (!continuousStayCheck) return;
@@ -44,7 +44,7 @@ public class ZeptoBtTrigger : MonoBehaviour
                 Trigger2DEnterEvent?.Invoke(trigger.type, TriggerEvent.Stay, other);
             }
         }
-    }
+    }*/
 
     void OnTriggerExit2D(Collider2D other)
     {
@@ -68,7 +68,7 @@ public class ZeptoBtTrigger : MonoBehaviour
             }
         }
     }
-
+/*
     void OnTriggerStay(Collider other)
     {
         if (!continuousStayCheck) return;
@@ -80,7 +80,7 @@ public class ZeptoBtTrigger : MonoBehaviour
                 Trigger3DEnterEvent?.Invoke(trigger.type, TriggerEvent.Stay, other);
             }
         }
-    }
+    }*/
     void OnTriggerExit(Collider other)
     {
         foreach (var trigger in triggers)
