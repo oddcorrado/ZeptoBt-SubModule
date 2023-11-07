@@ -17,7 +17,7 @@ public class ZeptoBtTree : MonoBehaviour
     [SerializeField] protected string filename;
     [SerializeField] protected ZeptoBtTrigger[] triggers;
     [SerializeField] protected float velocitySmoothing;
-    public bool started { get; set; } = false;
+    protected bool started = false;
 
 #if SPINE
     [SerializeField] SkeletonAnimation spineAnimation;
@@ -225,7 +225,15 @@ public class ZeptoBtTree : MonoBehaviour
             }
         });
     }
-    protected IEnumerator Ticker()
+    protected void StartTicker()
+    {
+        InvokeRepeating("InvokeTicker", 0, TickPeriod);
+    }
+    protected void InvokeTicker()
+    {
+        CrossTree();
+    }
+    /*protected IEnumerator Ticker()
     {
         while (true)
         {
@@ -233,7 +241,7 @@ public class ZeptoBtTree : MonoBehaviour
             yield return new WaitForSeconds(TickPeriod);
             CrossTree();
         }
-    }
+    }*/
 
     protected void CrossTree()
     {
@@ -303,7 +311,7 @@ public class ZeptoBtTree : MonoBehaviour
 
         zeptoBtQuickNodeViewUi = GetComponentInChildren<ZeptoBtQuickNodeViewUi>();
 
-        StartCoroutine(Ticker());
+        //StartCoroutine(Ticker());
     }
 
     protected void UpdateXX()
