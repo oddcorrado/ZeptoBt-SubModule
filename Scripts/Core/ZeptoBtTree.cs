@@ -16,7 +16,9 @@ public class ZeptoBtTree : MonoBehaviour
 {
     [SerializeField] protected string filename;
     [SerializeField] protected ZeptoBtTrigger[] triggers;
-    [SerializeField] protected float velocitySmoothing; 
+    [SerializeField] protected float velocitySmoothing;
+    public bool started { get; set; } = false;
+
 #if SPINE
     [SerializeField] SkeletonAnimation spineAnimation;
     [SerializeField] LifeManager lifeManager;
@@ -227,6 +229,7 @@ public class ZeptoBtTree : MonoBehaviour
     {
         while (true)
         {
+            if (!started) yield return new WaitForSeconds(TickPeriod);
             yield return new WaitForSeconds(TickPeriod);
             CrossTree();
         }
