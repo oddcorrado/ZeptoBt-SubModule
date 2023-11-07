@@ -12,8 +12,12 @@ public class Fili
 #if UNITY_ANDROID
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         return BetterStreamingAssets.ReadAllText($"{path}");
-#else
+#elif UNITY_EDITOR
+        Debug.Log($"tree path: ./BTTrees/{path}");
         return File.ReadAllText($"./BTTrees/{path}");
+#else
+        Debug.Log($"tree path: ./TheGoodDrive_Data/StreamingAssets/BTTrees/{path}");
+        return File.ReadAllText($"./TheGoodDrive_Data/StreamingAssets/BTTrees/{path}");
 #endif
     }
 
@@ -26,8 +30,12 @@ public class Fili
 #if UNITY_ANDROID
         if(!initDone) { BetterStreamingAssets.Initialize(); initDone = true; }
         return BetterStreamingAssets.FileExists($"/{path}");
-#else
+
+#elif UNITY_EDITOR             
+        Debug.Log($"FILE EXISTS ${path}  {File.Exists($"./BTTrees/{path}")}");
         return File.Exists($"./BTTrees/{path}");
+#else
+        return File.Exists($"./TheGoodDrive_Data/StreamingAssets/BTTrees/{path}");
 #endif
     }
 
