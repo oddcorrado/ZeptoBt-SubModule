@@ -291,6 +291,8 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
+    protected Dictionary<string, ZeptoBtTrigger> nameToTrigger =  new Dictionary<string, ZeptoBtTrigger>();
+
     protected virtual IEnumerator Start()
     {
         MainBody2D = GetComponent<Rigidbody2D>();
@@ -301,7 +303,8 @@ public class ZeptoBtTree : MonoBehaviour
 
         Root.CurrentNode = Root;
 
-        foreach (var trigger in triggers) trigger.Trigger2DEnterEvent += Trigger2DEnter;
+        foreach (var trigger in triggers)
+            trigger.Trigger2DEnterEvent += Trigger2DEnter;
 
         yield return null;
 
@@ -311,7 +314,31 @@ public class ZeptoBtTree : MonoBehaviour
 
         zeptoBtQuickNodeViewUi = GetComponentInChildren<ZeptoBtQuickNodeViewUi>();
 
+        foreach (var trigger in triggers)
+        {
+            Root.Evaluator.Variables.Add(trigger.gameObject.name, trigger.StayCheckInterval);
+            if (nameToTrigger.ContainsKey(trigger.gameObject.name))
+                Debug.LogError($"ZeptoBtTree trigger name used twice in tree {trigger.gameObject.name}");
+            else
+                nameToTrigger.Add(trigger.gameObject.name, trigger);
+        }
+
+        Root.Evaluator.ExpressionEvaluated += EvaluatorExpressionEvaluated;
         //StartCoroutine(Ticker());
+    }
+
+    private void EvaluatorExpressionEvaluated(object sender, CodingSeb.ExpressionEvaluator.ExpressionEvaluationEventArg e)
+    {
+        foreach(var kvp in nameToTrigger)
+        {
+            if (Root.Evaluator.Variables.ContainsKey(kvp.Key))
+            {
+                var stayInterval = Root.Evaluator.Variables[kvp.Key];
+
+                if (stayInterval is float)
+                    kvp.Value.StayCheckInterval = (float)stayInterval;
+            }
+        }
     }
 
     protected void UpdateXX()
