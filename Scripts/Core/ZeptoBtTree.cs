@@ -25,6 +25,7 @@ public class ZeptoBtTree : MonoBehaviour
 #endif
 
     public float TickPeriod { get; set; } = 0.1f;
+    public float TriggerCheckPeriod { get; set; } = 0.3f;
     public NodeRoot Root { get; set; } = new NodeRoot();
     // public Node CurrentNode { get; set; }
     public float CurrentTime { get; set; }
@@ -228,10 +229,26 @@ public class ZeptoBtTree : MonoBehaviour
     protected void StartTicker()
     {
         InvokeRepeating("InvokeTicker", 0, TickPeriod);
+        InvokeRepeating("CheckTriggers", 0, TriggerCheckPeriod);
     }
     protected void InvokeTicker()
     {
         CrossTree();
+    }
+
+    // Unfortunately we have to check triggers through polling
+    protected void CheckTriggers()
+    {
+        foreach (var kvp in nameToTrigger)
+        {
+            if (Root.Evaluator.Variables.ContainsKey(kvp.Key))
+            {
+                var stayInterval = Root.Evaluator.Variables[kvp.Key];
+
+                if (stayInterval is float)
+                    kvp.Value.StayCheckInterval = (float)stayInterval;
+            }
+        }
     }
     /*protected IEnumerator Ticker()
     {
@@ -323,22 +340,7 @@ public class ZeptoBtTree : MonoBehaviour
                 nameToTrigger.Add(trigger.gameObject.name, trigger);
         }
 
-        Root.Evaluator.ExpressionEvaluated += EvaluatorExpressionEvaluated;
         //StartCoroutine(Ticker());
-    }
-
-    private void EvaluatorExpressionEvaluated(object sender, CodingSeb.ExpressionEvaluator.ExpressionEvaluationEventArg e)
-    {
-        foreach(var kvp in nameToTrigger)
-        {
-            if (Root.Evaluator.Variables.ContainsKey(kvp.Key))
-            {
-                var stayInterval = Root.Evaluator.Variables[kvp.Key];
-
-                if (stayInterval is float)
-                    kvp.Value.StayCheckInterval = (float)stayInterval;
-            }
-        }
     }
 
     protected void UpdateXX()
