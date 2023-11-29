@@ -189,7 +189,9 @@ public class ZeptoBtTree : MonoBehaviour
 
                 default:
                     var className = ZeptoBtRegistrar.NameToNode[datas[0]];
-                    var node = Activator.CreateInstance(Type.GetType(className));
+                    Type nodeType = Type.GetType(className);
+                    if (nodeType == null) return;
+                    var node = Activator.CreateInstance(nodeType);
                     if(node is NodeLeaf)
                     {
                         var leaf = node as NodeLeaf;

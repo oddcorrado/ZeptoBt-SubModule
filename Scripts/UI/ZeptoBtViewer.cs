@@ -627,7 +627,10 @@ public class ZeptoBtViewer : MonoBehaviour
 
             var className = ZeptoBtRegistrar.NameToNode[kvp.Key];
             Debug.Log($"{kvp.Key} {className}");
-            var node = Activator.CreateInstance(Type.GetType(className));
+            Type nodeType = Type.GetType(className);
+            if (nodeType == null) continue;
+            var node = Activator.CreateInstance(nodeType);
+
             nodeToDocumentation.Add(kvp.Key,
                 new NodeInfo()
                 {
