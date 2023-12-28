@@ -96,8 +96,9 @@ public class ZeptoBtTree : MonoBehaviour
 
         return localIndex;
     }
-    public void CreateTree()
+    public void CreateTree(string tree = null)
     {
+        if (tree != null) FileData = tree;
         var lines = FileData == null ? new List<string>() { } : new List<string>(FileData.Split('\n'));
         List<Node> parentNodes = new List<Node>() { Root };
         int nodeIndex = 0;
@@ -112,7 +113,6 @@ public class ZeptoBtTree : MonoBehaviour
             line = line.Replace("\r", "");
             int depth = 0;
 
-            Debug.Log($"{line[0]}");
             while (depth < line.Length && line[depth] == '-')
             {
                 depth++; // check
