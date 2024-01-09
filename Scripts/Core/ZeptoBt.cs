@@ -149,6 +149,9 @@ namespace ZeptoBt
         public Node CurrentNode { get; set; }
         public CodingSeb.ExpressionEvaluator.ExpressionEvaluator Evaluator { get; set; } = new CodingSeb.ExpressionEvaluator.ExpressionEvaluator();
 
+        public delegate void VariablesUpdate();
+        public event VariablesUpdate VariablesUpdated;
+
         public override string Documentation { get; } =
             "<#ff9900><b>[root] : </b><#ffff00>Root Node\n" +
             "<#00ff00>First node in the tree, all operations on the tree go trough this node.";
@@ -171,6 +174,20 @@ namespace ZeptoBt
             Status = NodeReturn.Runnning;
             OnExit(CurrentNode.Status);
         }
+
+        public void SetVariable(string key, object value)
+        {
+            Evaluator.Variables[key] = value;
+
+            VariablesUpdated?.Invoke();
+        }
+
+        public object GetVariable(string key)
+        {
+            if(Evaluator.Variables.ContainsKey(key))
+                return Evaluator.Variables[key];
+            return null;
+        }
     }
     public class NodeComposite : Node
     {
@@ -189,7 +206,6 @@ namespace ZeptoBt
     public class NodeDecorator : NodeComposite
     {
     }
-
     public class NodeLeaf : Node
     {
         public event ForceTickDelegate ForceTickEvent;

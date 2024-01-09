@@ -96,6 +96,54 @@ public class ZeptoBtTree : MonoBehaviour
 
         return localIndex;
     }
+
+    void AddBootVariable(string line)
+    {
+        Regex rxFloat = new(@"[\*]*([\w]*)=([\d]*\.[\d]*)");
+        if(rxFloat.IsMatch(line))
+        {
+            var match = rxFloat.Match(line);
+            var key = match.Groups[1].Value;
+            var val = match.Groups[2].Value;
+
+            if (float.TryParse(val, out var valFloat))
+                Root.Evaluator.Variables.Add(key, valFloat);
+            return;
+        }
+        Regex rxInt = new(@"[\*]*([\w]*)=([\d]*)");
+        if (rxInt.IsMatch(line))
+        {
+            var match = rxFloat.Match(line);
+            var key = match.Groups[1].Value;
+            var val = match.Groups[2].Value;
+
+            if (int.TryParse(val, out var valInt))
+                Root.Evaluator.Variables.Add(key, valInt);
+            return;
+        }
+        Regex rxBool = new(@"[\*]*([\w]*)=(true|false)");
+        if (rxBool.IsMatch(line.ToLower()))
+        {
+            var match = rxFloat.Match(line);
+            var key = match.Groups[1].Value;
+            var val = match.Groups[2].Value.ToLower();
+
+            if (bool.TryParse(val, out var valBool))
+                Root.Evaluator.Variables.Add(key, valBool);
+            return;
+        }
+        Regex rxString = new(@"[\*]*([\w]*)=([\d]*\.[\d]*)");
+        if (rxFloat.IsMatch(line))
+        {
+            var match = rxFloat.Match(line);
+            var key = match.Groups[1].Value;
+            var val = match.Groups[2].Value;
+
+            Root.Evaluator.Variables.Add(key, val);
+            return;
+        }
+    }
+
     public void CreateTree(string tree = null)
     {
         if (tree != null) FileData = tree;
@@ -107,11 +155,20 @@ public class ZeptoBtTree : MonoBehaviour
         Root.Index = nodeIndex++;
         Root.Children = new List<Node>();
         nodes = new List<Node>();
+        List<string> bootVarLines = new List<string>();
 
         lines.ForEach(line =>
         {
             line = line.Replace("\r", "");
             int depth = 0;
+
+            line.Trim();
+
+            if (line[0] == '*')
+            {
+                bootVarLines.Add(line);
+                return;
+            }
 
             while (depth < line.Length && line[depth] == '-')
             {
@@ -231,6 +288,8 @@ public class ZeptoBtTree : MonoBehaviour
                     break;
             }
         });
+
+        bootVarLines.ForEach(line => AddBootVariable(line));
     }
     protected void StartTicker()
     {

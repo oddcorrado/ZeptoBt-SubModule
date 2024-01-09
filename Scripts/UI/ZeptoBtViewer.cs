@@ -70,26 +70,37 @@ public class ZeptoBtViewer : MonoBehaviour
         set
         {
             if(Root != null && (Root as NodeRoot).Evaluator != null)
-                (Root as NodeRoot).Evaluator.ExpressionEvaluated -= VariableUpdate;
+            {
+                (Root as NodeRoot).Evaluator.ExpressionEvaluated -= VariablesUpdate;
+                (Root as NodeRoot).VariablesUpdated -= VariablesUpdate;
+            }
             root = value;
             Tree = root.Tree;
             history = new List<string>();
             if(Root != null)
-                (Root as NodeRoot).Evaluator.ExpressionEvaluated += VariableUpdate;
+            {
+                (Root as NodeRoot).Evaluator.ExpressionEvaluated += VariablesUpdate;
+                (Root as NodeRoot).VariablesUpdated += VariablesUpdate;
+            }
             Reset();
         }
     }
 
-    void VariableUpdate(object sender, ExpressionEvaluationEventArg e)
+    void VariablesUpdate(object sender, ExpressionEvaluationEventArg e)
+    {
+        VariablesUpdate();
+    }
+
+    public void VariablesUpdate()
     {
         var str = "";
         foreach (var kvp in (Root as NodeRoot).Evaluator.Variables)
         {
-            //Debug.Log($"{kvp.Key} = {kvp.Value}");
             str += $"<#00aaff><b>{kvp.Key}</b><#ffffff> = <#00ffff>{kvp.Value}\n";
         }
         variablesText.text = str;
     }
+
 
     void Reset(bool addHistory = true)
     {
