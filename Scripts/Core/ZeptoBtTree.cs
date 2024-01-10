@@ -5,6 +5,7 @@ using UnityEngine;
 using ZeptoBt;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Globalization;
 
 #if SPINE
 using Spine.Unity;
@@ -61,6 +62,9 @@ public class ZeptoBtTree : MonoBehaviour
 
     public string FileData { get; set; }
 
+    List<string> bootVarLines;
+    public List<string> BootVarLines { get => bootVarLines; }
+
     public void ReadData()
     {
         if (Fili.FileExists($"{filename}"))
@@ -99,18 +103,18 @@ public class ZeptoBtTree : MonoBehaviour
 
     void AddBootVariable(string line)
     {
-        Regex rxFloat = new(@"[\*]*([\w]*)=([\d]*\.[\d]*)");
+        Regex rxFloat = new(@"[\*]+[\s]*([\w]+)[\s]*=[\s]*([\d]+\.[\d]+)[\s]*(#.*)*");
         if(rxFloat.IsMatch(line))
         {
             var match = rxFloat.Match(line);
             var key = match.Groups[1].Value;
             var val = match.Groups[2].Value;
 
-            if (float.TryParse(val, out var valFloat))
+            if (float.TryParse(val, NumberStyles.Float, CultureInfo.InvariantCulture, out var valFloat))
                 Root.Evaluator.Variables.Add(key, valFloat);
             return;
         }
-        Regex rxInt = new(@"[\*]*([\w]*)=([\d]*)");
+        Regex rxInt = new(@"[\*]+[\s]*([\w]+)[\s]*=[\s]*([\d]+)[\s]*(#.*)*");
         if (rxInt.IsMatch(line))
         {
             var match = rxFloat.Match(line);
@@ -121,10 +125,10 @@ public class ZeptoBtTree : MonoBehaviour
                 Root.Evaluator.Variables.Add(key, valInt);
             return;
         }
-        Regex rxBool = new(@"[\*]*([\w]*)=(true|false)");
+        Regex rxBool = new(@"[\*]+[\s]*([\w]+)[\s]*=[\s]*(true|false)[\s]*(#.*)*");
         if (rxBool.IsMatch(line.ToLower()))
         {
-            var match = rxFloat.Match(line);
+            var match = rxBool.Match(line);
             var key = match.Groups[1].Value;
             var val = match.Groups[2].Value.ToLower();
 
@@ -132,10 +136,10 @@ public class ZeptoBtTree : MonoBehaviour
                 Root.Evaluator.Variables.Add(key, valBool);
             return;
         }
-        Regex rxString = new(@"[\*]*([\w]*)=([\d]*\.[\d]*)");
-        if (rxFloat.IsMatch(line))
+        Regex rxString = new(@"[\*]+[\s]*([\w]+)[\s]*=[\s]*([^#^\s]+)[\s]*(#.*)*");
+        if (rxString.IsMatch(line))
         {
-            var match = rxFloat.Match(line);
+            var match = rxString.Match(line);
             var key = match.Groups[1].Value;
             var val = match.Groups[2].Value;
 
@@ -155,14 +159,14 @@ public class ZeptoBtTree : MonoBehaviour
         Root.Index = nodeIndex++;
         Root.Children = new List<Node>();
         nodes = new List<Node>();
-        List<string> bootVarLines = new List<string>();
+        bootVarLines = new List<string>();
 
         lines.ForEach(line =>
         {
             line = line.Replace("\r", "");
             int depth = 0;
 
-            line.Trim();
+            line = line.Trim();
 
             if (line[0] == '*')
             {
