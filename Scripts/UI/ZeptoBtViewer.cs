@@ -225,8 +225,10 @@ public class ZeptoBtViewer : MonoBehaviour
 
     public void NodeSave()
     {
-        Debug.Log($"SAVE {filenameText.text} {StringifyNode(Root, 0)}");
-        Fili.WriteAllText(filenameText.text, StringifyNode(Root, 0));
+        Debug.Log($"SAVE {filenameText.text} { StringifyNode(Root, 0) }");
+        var str = StringifyNode(Root, 0);
+        Root.Tree.BootVarLines.ForEach(line => { str += $"\n{line}"; });
+        Fili.WriteAllText(filenameText.text, str);
     }
 
     string StringifyNode(Node node, int depth)
