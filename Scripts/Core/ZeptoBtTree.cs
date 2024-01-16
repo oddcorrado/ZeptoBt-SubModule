@@ -163,7 +163,7 @@ public class ZeptoBtTree : MonoBehaviour
             int depth = 0;
 
             line.Trim();
-
+            if (line.Length == 0) return;
             if (line[0] == '*')
             {
                 bootVarLines.Add(line);
@@ -379,7 +379,7 @@ public class ZeptoBtTree : MonoBehaviour
     {
         MainBody2D = GetComponent<Rigidbody2D>();
         MainBody = GetComponent<Rigidbody>();
-
+        Children = new Dictionary<string, GameObject>();
         for (int i = 0; i <  transform.childCount; i++)
             Children.Add(transform.GetChild(i).name, transform.GetChild(i).gameObject);
 
@@ -398,7 +398,8 @@ public class ZeptoBtTree : MonoBehaviour
 
         foreach (var trigger in triggers)
         {
-            Root.Evaluator.Variables.Add(trigger.gameObject.name, trigger.StayCheckInterval);
+            if (!Root.Evaluator.Variables.ContainsKey(trigger.gameObject.name))
+                Root.Evaluator.Variables.Add(trigger.gameObject.name, trigger.StayCheckInterval);
             if (nameToTrigger.ContainsKey(trigger.gameObject.name))
                 Debug.LogError($"ZeptoBtTree trigger name used twice in tree {trigger.gameObject.name}");
             else
