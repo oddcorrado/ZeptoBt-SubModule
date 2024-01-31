@@ -148,10 +148,29 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
-    public void CreateTree(string tree = null)
+    public void EditTree(string StartVariables)
     {
-        if (tree != null) FileData = tree;
-        var lines = FileData == null ? new List<string>() { } : new List<string>(FileData.Split('\n'));
+        List<string> startVar = new List<string>(StartVariables.Split('\n'));
+        List<string> currentVar = new List<string>(FileData.Split('\n'));
+     
+        string pattern = @"\w.+";
+        int varIdx = 0;
+
+        for (int i =0; i < currentVar.Count; i++)
+        {
+            Match match = Regex.Match(currentVar[i], pattern);
+            if (match.Success && currentVar[i].Contains(startVar[varIdx].Split(" ")[0]))
+            {
+                currentVar[i] = currentVar[i].Replace(match.Groups[0].ToString(), startVar[varIdx++]);
+            }
+        }
+        CreateTree(currentVar);
+    }
+
+    public void CreateTree(List<string> lines = null)
+    {
+        //if (tree != null) FileData = tree;
+        lines = lines ?? (FileData == null ? new List<string>() { } : new List<string>(FileData.Split('\n')));
         List<Node> parentNodes = new List<Node>() { Root };
         int nodeIndex = 0;
         Root.Tree = this;
