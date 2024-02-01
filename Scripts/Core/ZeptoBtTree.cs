@@ -352,6 +352,7 @@ public class ZeptoBtTree : MonoBehaviour
     protected void CrossTree()
     {
         // Debug.Log($"BT ***** CROSS TREE");
+        if (Root.CurrentNode == null) return;
         int inIndex = Root.CurrentNode.Index;
         if(zeptoBtQuickNodeViewUi != null && zeptoBtQuickNodeViewUi.IsActive)
             nodes.ForEach(n => n.Status = NodeReturn.Unprocessed);
