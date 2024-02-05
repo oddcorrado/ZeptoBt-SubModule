@@ -42,7 +42,7 @@ public class ZeptoBtTrigger : MonoBehaviour
         }
     }
 
-    void OnTriggerStay2D(Collider2D other)
+    /* void OnTriggerStay2D(Collider2D other)
     {
         if (!continuousStayCheck) return;
         if (Time.time < lastStayCheckDate + StayCheckInterval) return;
@@ -56,7 +56,7 @@ public class ZeptoBtTrigger : MonoBehaviour
                 lastStayCheckDate = Time.time;
             }
         }
-    }
+    } */
 
     void OnTriggerExit2D(Collider2D other)
     {
@@ -82,7 +82,7 @@ public class ZeptoBtTrigger : MonoBehaviour
         }
     }
 
-    void OnTriggerStay(Collider other)
+    /* void OnTriggerStay(Collider other)
     {
         if (!continuousStayCheck) return;
         if (Time.time < lastStayCheckDate + StayCheckInterval) return;
@@ -96,7 +96,7 @@ public class ZeptoBtTrigger : MonoBehaviour
                 lastStayCheckDate = Time.time;
             }
         }
-    }
+    } */
 
     void OnTriggerExit(Collider other)
     {

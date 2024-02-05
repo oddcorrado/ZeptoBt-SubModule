@@ -462,7 +462,6 @@ public class ZeptoBtTree : MonoBehaviour
         {
             var vel = MainBody.velocity;
             if(vel.magnitude > 1) transform.rotation = Quaternion.LookRotation(new Vector3(vel.x, 0, vel.z)); // rotation
-            Debug.Log($"rot={transform.rotation.eulerAngles} vel={vel}");
 
             if (ApplyVx) vel.x = vel.x * velocitySmoothing + Vx * (1 - velocitySmoothing);
             if (ApplyVy) vel.y = vel.y * velocitySmoothing + Vy * (1 - velocitySmoothing);
