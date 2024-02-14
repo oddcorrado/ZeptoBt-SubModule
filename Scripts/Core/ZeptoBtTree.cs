@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +6,6 @@ using ZeptoBt;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
-using Pathfinding.RVO;
 using Sirenix.Utilities;
 
 #if SPINE
