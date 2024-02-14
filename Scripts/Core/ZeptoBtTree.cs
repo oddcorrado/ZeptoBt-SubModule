@@ -6,6 +6,8 @@ using ZeptoBt;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
+using Pathfinding.RVO;
+using Sirenix.Utilities;
 
 #if SPINE
 using Spine.Unity;
@@ -148,6 +150,27 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
+    public void HandleVariables(string variables)
+    {
+        if (variables == null || variables == "") return;
+        List<string> lines = new List<string>(variables.Split('\n'));
+     
+        lines.ForEach(line =>
+        {
+            List<string> varLines = new List<string>(variables.Split(' ')); ;
+            string nodeClass = ZeptoBtRegistrar.NameToNode[varLines[0]];
+            Type nodeType = Type.GetType(nodeClass);
+            List<string> newVariables = new() {};
+
+            for (int i = 1; i < varLines.Count; i++)
+            {
+                newVariables.Add($"{varLines[i]} ");
+            }
+            
+            Node nodeLeaf = nodes.Find(node => node.GetType() == nodeType);
+            nodeLeaf.Params = newVariables.Count == 0 ?  new[] {" "} : newVariables.ToArray();
+        });
+    }
     public void EditTree(string StartVariables)
     {
         List<string> startVar = new List<string>(StartVariables.Split('\n'));
@@ -352,7 +375,7 @@ public class ZeptoBtTree : MonoBehaviour
     protected void CrossTree()
     {
         // Debug.Log($"BT ***** CROSS TREE");
-        if (Root.CurrentNode == null) return;
+        if (Root?.CurrentNode == null) return;
         int inIndex = Root.CurrentNode.Index;
         if(zeptoBtQuickNodeViewUi != null && zeptoBtQuickNodeViewUi.IsActive)
             nodes.ForEach(n => n.Status = NodeReturn.Unprocessed);
@@ -363,7 +386,7 @@ public class ZeptoBtTree : MonoBehaviour
         if(zeptoBtQuickNodeViewUi != null && zeptoBtQuickNodeViewUi.IsActive)
         {
             Node node = Root;
-
+            
             nodes.ForEach(n =>
             {
                 if (n.Index > node.Index && n.Status != NodeReturn.Unprocessed) 
