@@ -78,6 +78,11 @@ public class ZeptoBtTree : MonoBehaviour
         }
     }
 
+    public void ToggleTrigger(string trigName, bool activate)
+    {
+        triggers.FirstOrDefault(t => t.gameObject.name == trigName)?.gameObject.SetActive(activate);
+    }
+
     public void UpdateIndexes()
     {
         nodes = new List<Node>();
