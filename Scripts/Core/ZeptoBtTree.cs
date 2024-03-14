@@ -342,8 +342,15 @@ public class ZeptoBtTree : MonoBehaviour
 
         bootVarLines.ForEach(line => AddBootVariable(line));
     }
+
+    protected void StopTicker()
+    {
+        CancelInvoke();
+    }
+
     protected void StartTicker()
     {
+        StopTicker();
         InvokeRepeating("InvokeTicker", 0, TickPeriod);
         InvokeRepeating("CheckTriggers", 0, TriggerCheckPeriod);
     }
