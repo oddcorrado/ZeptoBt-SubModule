@@ -185,6 +185,7 @@ public class ZeptoBtTree : MonoBehaviour
 
         for (int i =0; i < currentVar.Count; i++)
         {
+            if (startVar[varIdx] == "") continue;
             Match match = Regex.Match(currentVar[i], pattern);
             if (match.Success && currentVar[i].Contains(startVar[varIdx].Split(" ")[0]))
             {
