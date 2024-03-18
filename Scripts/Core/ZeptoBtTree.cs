@@ -77,12 +77,22 @@ public class ZeptoBtTree : MonoBehaviour
             FileData = Fili.ReadAllTextDev($"{filename}");
         }
     }
-
     public void ToggleTrigger(string trigName, bool activate)
     {
+        Debug.Log($"TOGGLE TRIGGER {trigName} {activate} {gameObject.GetInstanceID()}");
+        if (trigName == "all")
+        {
+            foreach (var trigger in triggers) trigger.gameObject.SetActive(activate);
+            return;
+        }
+        ZeptoBtTrigger trig = triggers.FirstOrDefault(t => t.gameObject.name.Contains(trigName));
+        if (trig == null)
+        {
+            Debug.LogError($"Cannot find trigger {trigName}, trying to toggle it {activate}");
+        }
         triggers.FirstOrDefault(t => t.gameObject.name == trigName)?.gameObject.SetActive(activate);
     }
-
+    
     public void UpdateIndexes()
     {
         nodes = new List<Node>();
