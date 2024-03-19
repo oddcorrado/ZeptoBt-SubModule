@@ -172,6 +172,21 @@ namespace ZeptoBt
             if(Children.Count > 0)
                 Children[0].Tick();
             Status = NodeReturn.Runnning;
+
+            string lastNode = "";
+            Tree.Traverse(this, node =>
+            {                
+                if (lastNode == "" && node is NodeLeaf && node.Status == NodeReturn.Failure)
+                    lastNode = node.Doc.name;
+            });
+            if (lastNode == "")
+                lastNode = this.Status == NodeReturn.Failure ? "Root" : "None";
+
+            if (Tree is TGDZeptoBtTreePedestrian)
+            {
+                ((TGDZeptoBtTreePedestrian)Tree).LastFailureNode = lastNode;                
+            }
+
             OnExit(CurrentNode.Status);
         }
 
