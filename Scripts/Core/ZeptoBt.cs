@@ -177,7 +177,7 @@ namespace ZeptoBt
             Tree.Traverse(this, node =>
             {                
                 if (lastNode == "" && node is NodeLeaf && node.Status == NodeReturn.Failure)
-                    lastNode = node.Doc.name;
+                    lastNode = node.Doc != null ? node.Doc.name : "NodeWithNoDoc";
             });
             if (lastNode == "")
                 lastNode = this.Status == NodeReturn.Failure ? "Root" : "None";
