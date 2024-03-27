@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
 using Sirenix.Utilities;
+using UnityEditor.Profiling.Memory.Experimental;
+using Unity.Collections;
+using Unity.Mathematics;
 
 #if SPINE
 using Spine.Unity;
@@ -57,7 +60,15 @@ public class ZeptoBtTree : MonoBehaviour
         public string type;
         public GameObject gameObject;
     }
-    public List<TriggerObject> TriggerObjects { get; set; } = new List<TriggerObject>();
+
+    public struct NativeTriggerObject
+    {
+        public FixedString32Bytes type;
+        public int id;
+        public float3? stopPos;
+    }
+
+    public virtual List<TriggerObject> TriggerObjects { get; set; } = new List<TriggerObject>();
 
     public Dictionary<string, GameObject> Children { get; set; } = new Dictionary<string, GameObject>();
 
