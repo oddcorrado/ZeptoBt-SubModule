@@ -479,12 +479,13 @@ public class ZeptoBtTree : MonoBehaviour
 
         zeptoBtQuickNodeViewUi = GetComponentInChildren<ZeptoBtQuickNodeViewUi>();
 
+        nameToTrigger = new Dictionary<string, ZeptoBtTrigger>();
         foreach (var trigger in triggers)
         {
             if (!Root.Evaluator.Variables.ContainsKey(trigger.gameObject.name))
                 Root.Evaluator.Variables.Add(trigger.gameObject.name, trigger.StayCheckInterval);
             if (nameToTrigger.ContainsKey(trigger.gameObject.name))
-                Debug.LogError($"ZeptoBtTree trigger name used twice in tree {trigger.gameObject.name}");
+                Debug.LogError($"ZeptoBtTree trigger name used twice in tree {trigger.gameObject.name} in Agent {this.gameObject.name}");
             else
                 nameToTrigger.Add(trigger.gameObject.name, trigger);
         }
