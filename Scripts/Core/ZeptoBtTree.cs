@@ -6,8 +6,6 @@ using ZeptoBt;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
-using Sirenix.Utilities;
-using UnityEditor.Profiling.Memory.Experimental;
 using Unity.Collections;
 using Unity.Mathematics;
 
