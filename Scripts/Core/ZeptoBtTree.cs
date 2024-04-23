@@ -64,6 +64,7 @@ public class ZeptoBtTree : MonoBehaviour
         public FixedString32Bytes type;
         public int id;
         public float3? stopPos;
+        public float width;
     }
 
     public virtual List<TriggerObject> TriggerObjects { get; set; } = new List<TriggerObject>();
