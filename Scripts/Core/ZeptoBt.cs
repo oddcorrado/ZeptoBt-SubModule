@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CodingSeb.ExpressionEvaluator;
+// using CodingSeb.ExpressionEvaluator;
 using System;
 using UnityEngine;
 
@@ -134,20 +134,25 @@ namespace ZeptoBt
                 }
             }
         }
-        public T Get(CodingSeb.ExpressionEvaluator.ExpressionEvaluator evaluator)
+        public T Get(DummyEvaluator evaluator)
         {
-            if(isVar && evaluator.Variables.ContainsKey(name))
+            /*if(isVar && evaluator.Variables.ContainsKey(name))
             {
                 return (T)evaluator.Variables[name];
-            }
-            return value;
+            } */
+            return default(T);
         }
     }
 
+    public class DummyEvaluator
+    {
+        public object Evaluate(string d) { return null; }
+        public Dictionary<string, object> Variables;
+    }
     public class NodeRoot : NodeComposite
     {
         public Node CurrentNode { get; set; }
-        public CodingSeb.ExpressionEvaluator.ExpressionEvaluator Evaluator { get; set; } = new CodingSeb.ExpressionEvaluator.ExpressionEvaluator();
+        public DummyEvaluator Evaluator { get; set; } = new DummyEvaluator();
 
         public override string Documentation { get; } =
             "<#ff9900><b>[root] : </b><#ffff00>Root Node\n" +

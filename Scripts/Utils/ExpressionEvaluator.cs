@@ -1,6 +1,7 @@
+#if TEST
 /******************************************************************************************************
     Title : ExpressionEvaluator (https://github.com/codingseb/ExpressionEvaluator)
-    Version : 1.4.38.0 
+    Version : 1.4.40.0 
     (if last digit (the forth) is not a zero, the version is an intermediate version and can be unstable)
 
     Author : Coding Seb
@@ -9,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
@@ -24,7 +26,7 @@ using System.Text.RegularExpressions;
 namespace CodingSeb.ExpressionEvaluator
 {
     /// <summary>
-    /// This class allow to evaluate a string math or pseudo C# expression
+    /// This class allow to evaluate a string math or pseudo C# expression/script
     /// </summary>
     public partial class ExpressionEvaluator
     {
@@ -224,6 +226,12 @@ namespace CodingSeb.ExpressionEvaluator
             ExpressionOperator.BitwiseComplement,
             ExpressionOperator.UnaryPlus,
             ExpressionOperator.UnaryMinus
+        };
+
+        protected IDictionary<string, ExpressionOperator> unaryOperatorsDictionary = new Dictionary<string, ExpressionOperator>()
+        {
+            { "+",  ExpressionOperator.UnaryPlus },
+            { "-",  ExpressionOperator.UnaryMinus }
         };
 
         protected virtual IList<ExpressionOperator> LeftOperandOnlyOperatorsEvaluationDictionary => leftOperandOnlyOperatorsEvaluationDictionary;
@@ -464,17 +472,17 @@ namespace CodingSeb.ExpressionEvaluator
         #region Caching
 
         /// <summary>
-        /// if set to <c>true</c> use a cache for types that were resolved to resolve faster next time.
-        /// if set to <c>false</c> the cache of types resolution is not use for this instance of ExpressionEvaluator.
-        /// Default : false
-        /// the cache is the static Dictionary TypesResolutionCaching (so it is shared by all instances of ExpressionEvaluator that have CacheTypesResolutions enabled)
+        /// if set to <c>true</c> use a cache for types that were resolved to resolve faster next time.<para/>
+        /// if set to <c>false</c> the cache of types resolution is not use for this instance of ExpressionEvaluator.<para/>
+        /// Default : false<para/>
+        /// The cache is the static Dictionary TypesResolutionCaching (so it is shared by all instances of ExpressionEvaluator that have CacheTypesResolutions enabled)
         /// </summary>
         public bool CacheTypesResolutions { get; set; }
 
         /// <summary>
         /// A shared cache for types resolution.
         /// </summary>
-        public static IDictionary<string, Type> TypesResolutionCaching { get; set; } = new Dictionary<string, Type>();
+        public static IDictionary<string, Type> TypesResolutionCaching { get; set; } = new ConcurrentDictionary<string, Type>();
 
         /// <summary>
         /// Clear all ExpressionEvaluator caches
@@ -492,8 +500,8 @@ namespace CodingSeb.ExpressionEvaluator
         private IList<Assembly> assemblies;
 
         /// <summary>
-        /// All assemblies needed to resolves Types
-        /// by default all Assemblies loaded in the current AppDomain
+        /// All assemblies needed to resolves Types<para/>
+        /// By default all assemblies loaded in the current AppDomain
         /// </summary>
         public virtual IList<Assembly> Assemblies
         {
@@ -502,7 +510,8 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// All Namespaces Where to find types
+        /// All Namespaces Where to find types<para/>
+        /// Equivalent of a <c>using Namespace;</c>
         /// </summary>
         public virtual IList<string> Namespaces { get; set; } = new List<string>()
         {
@@ -544,8 +553,8 @@ namespace CodingSeb.ExpressionEvaluator
         private bool optionCaseSensitiveEvaluationActive = true;
 
         /// <summary>
-        /// If <c>true</c> all evaluation are case sensitives.
-        /// If <c>false</c> evaluations are case insensitive.
+        /// If <c>true</c> all evaluation are case sensitives.<para/>
+        /// If <c>false</c> evaluations are case insensitive.<para/>
         /// By default = true
         /// </summary>
         public bool OptionCaseSensitiveEvaluationActive
@@ -565,8 +574,8 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// If <c>true</c> Variables dictionary is kept as given so variables are persist outside of the evaluator and the comparer for keys can be defined by the user
-        /// If <c>false</c> Variables dictionary references are copied internally to follow OptionCaseSensitiveEvaluationActive with an internal protected comparer for keys
+        /// If <c>true</c> Variables dictionary is kept as given so variables are persist outside of the evaluator and the comparer for keys can be defined by the user<para/>
+        /// If <c>false</c> Variables dictionary references are copied internally to follow OptionCaseSensitiveEvaluationActive with an internal protected comparer for keys<para/>
         /// By default = false
         /// </summary>
         public bool OptionVariablesPersistenceCustomComparer { get; set; }
@@ -576,8 +585,8 @@ namespace CodingSeb.ExpressionEvaluator
         protected StringComparer StringComparerForCasing => OptionCaseSensitiveEvaluationActive ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase;
 
         /// <summary>
-        /// If <c>true</c> all numbers without decimal and suffixes evaluations will be done as double
-        /// If <c>false</c> Integers values without decimal and suffixes will be evaluate as int as in C# (Warning some operation can round values)
+        /// If <c>true</c> all numbers without decimal and suffixes evaluations will be done as double<para/>
+        /// If <c>false</c> Integers values without decimal and suffixes will be evaluate as int as in C# (Warning some operation can round values)<para/>
         /// By default = false
         /// </summary>
         public bool OptionForceIntegerNumbersEvaluationsAsDoubleByDefault { get; set; }
@@ -585,9 +594,9 @@ namespace CodingSeb.ExpressionEvaluator
         private CultureInfo cultureInfoForNumberParsing = CultureInfo.InvariantCulture.Clone() as CultureInfo;
 
         /// <summary>
-        /// The culture used to evaluate numbers
-        /// Synchronized with OptionNumberParsingDecimalSeparator and OptionNumberParsingThousandSeparator.
-        /// So always set a full CultureInfo object and do not change CultureInfoForNumberParsing.NumberFormat.NumberDecimalSeparator and CultureInfoForNumberParsing.NumberFormat.NumberGroupSeparator properties directly.
+        /// The culture used to evaluate numbers.<para/>
+        /// Synchronized with OptionNumberParsingDecimalSeparator and OptionNumberParsingThousandSeparator.<para/>
+        /// So always set a full CultureInfo object and do not change CultureInfoForNumberParsing.NumberFormat.NumberDecimalSeparator and CultureInfoForNumberParsing.NumberFormat.NumberGroupSeparator properties directly.<para/>
         /// Warning if using comma in separators change also OptionFunctionArgumentsSeparator and OptionInitializersSeparator otherwise it will create conflicts
         /// </summary>
         public CultureInfo CultureInfoForNumberParsing
@@ -609,9 +618,9 @@ namespace CodingSeb.ExpressionEvaluator
         private string optionNumberParsingDecimalSeparator = ".";
 
         /// <summary>
-        /// Allow to change the decimal separator of numbers when parsing expressions.
-        /// By default "."
-        /// Warning if using comma change also OptionFunctionArgumentsSeparator and OptionInitializersSeparator otherwise it will create conflicts.
+        /// Allow to change the decimal separator of numbers when parsing expressions.<para/>
+        /// By default "."<para/>
+        /// Warning if using comma change also OptionFunctionArgumentsSeparator and OptionInitializersSeparator otherwise it will create conflicts.<para/>
         /// Modify CultureInfoForNumberParsing.
         /// </summary>
         public string OptionNumberParsingDecimalSeparator
@@ -632,9 +641,9 @@ namespace CodingSeb.ExpressionEvaluator
         private string optionNumberParsingThousandSeparator = string.Empty;
 
         /// <summary>
-        /// Allow to change the thousand separator of numbers when parsing expressions.
-        /// By default string.Empty
-        /// Warning if using comma change also OptionFunctionArgumentsSeparator and OptionInitializersSeparator otherwise it will create conflicts.
+        /// Allow to change the thousand separator of numbers when parsing expressions.<para/>
+        /// By default string.Empty<para/>
+        /// Warning if using comma change also OptionFunctionArgumentsSeparator and OptionInitializersSeparator otherwise it will create conflicts.<para/>
         /// Modify CultureInfoForNumberParsing.
         /// </summary>
         public string OptionNumberParsingThousandSeparator
@@ -653,22 +662,22 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Allow to change the separator of functions arguments.
-        /// By default ","
-        /// Warning must to be changed if OptionNumberParsingDecimalSeparator = "," otherwise it will create conflicts
+        /// Allow to change the separator of functions arguments.<para/>
+        /// By default ","<para/>
+        /// Warning must to be changed if OptionNumberParsingDecimalSeparator = "," otherwise it will create conflicts<para/>
         /// </summary>
         public string OptionFunctionArgumentsSeparator { get; set; } = ",";
 
         /// <summary>
-        /// Allow to change the separator of Object and collections Initialization between { and } after the keyword new.
-        /// By default ","
-        /// Warning must to be changed if OptionNumberParsingDecimalSeparator = "," otherwise it will create conflicts
+        /// Allow to change the separator of Object and collections Initialization between { and } after the keyword new.<para/>
+        /// By default ","<para/>
+        /// Warning must to be changed if OptionNumberParsingDecimalSeparator = "," otherwise it will create conflicts<para/>
         /// </summary>
         public string OptionInitializersSeparator { get; set; } = ",";
 
         /// <summary>
-        /// if <c>true</c> allow to add the prefix Fluid or Fluent before void methods names to return back the instance on which the method is call.
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to add the prefix Fluid or Fluent before void methods names to return back the instance on which the method is call.<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionFluidPrefixingActive { get; set; } = true;
@@ -691,8 +700,8 @@ namespace CodingSeb.ExpressionEvaluator
         private Func<ExpressionEvaluator, List<string>, object> newMethodMem;
 
         /// <summary>
-        /// if <c>true</c> allow to create instance of object with the Default function new(ClassNam,...).
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to create instance of object with the Default function new(ClassNam,...).<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionNewFunctionEvaluationActive
@@ -716,130 +725,133 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// if <c>true</c> allow to create instance of object with the C# syntax new ClassName(...).
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to create instance of object with the C# syntax new ClassName(...).<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionNewKeywordEvaluationActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow to call static methods on classes.
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to call static methods on classes.<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionStaticMethodsCallActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow to get static properties on classes
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to get static properties on classes<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionStaticPropertiesGetActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow to call instance methods on objects.
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to call instance methods on objects.<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionInstanceMethodsCallActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow to get instance properties on objects
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to get instance properties on objects<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionInstancePropertiesGetActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow to get object at index or key like IndexedObject[indexOrKey]
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow to get object at index or key like <c>IndexedObject[indexOrKey]</c><para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionIndexingActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow string interpretation with ""
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow string interpretation with ""<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionStringEvaluationActive { get; set; } = true;
 
         /// <summary>
-        /// if <c>true</c> allow char interpretation with ''
-        /// if <c>false</c> unactive this functionality.
+        /// if <c>true</c> allow char interpretation with ''<para/>
+        /// if <c>false</c> unactive this functionality.<para/>
         /// By default : true
         /// </summary>
         public bool OptionCharEvaluationActive { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> Evaluate function is callables in an expression. If <c>false</c> Evaluate is not callable.
-        /// By default : true
+        /// If <c>true</c> Evaluate function is callables in an expression.<para/>
+        /// If <c>false</c> Evaluate is not callable.<para/>
+        /// By default : true<para/>
         /// if set to false for security (also ensure that ExpressionEvaluator type is in TypesToBlock list)
         /// </summary>
         public bool OptionEvaluateFunctionActive { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> allow to assign a value to a variable in the Variable disctionary with (=, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=, ++ or --)
-        /// If <c>false</c> unactive this functionality
+        /// If <c>true</c> allow to assign a value to a variable in the Variable disctionary with (=, +=, -=, *=, /=, %=, &amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=, ++ or --)<para/>
+        /// If <c>false</c> unactive this functionality<para/>
         /// By default : true
         /// </summary>
         public bool OptionVariableAssignationActive { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> allow to set/modify a property or a field value with (=, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=, ++ or --)
-        /// If <c>false</c> unactive this functionality
+        /// If <c>true</c> allow to set/modify a property or a field value with (=, +=, -=, *=, /=, %=, &amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=, ++ or --)<para/>
+        /// If <c>false</c> unactive this functionality<para/>
         /// By default : true
         /// </summary>
         public bool OptionPropertyOrFieldSetActive { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> allow to assign a indexed element like Collections, List, Arrays and Dictionaries with (=, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=, ++ or --)
-        /// If <c>false</c> unactive this functionality
+        /// If <c>true</c> allow to assign a indexed element like Collections, List, Arrays and Dictionaries with (=, +=, -=, *=, /=, %=, &amp;=, |=, ^=, &lt;&lt;=, &gt;&gt;=, ++ or --)<para/>
+        /// If <c>false</c> unactive this functionality<para/>
         /// By default : true
         /// </summary>
         public bool OptionIndexingAssignationActive { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> ScriptEvaluate function is callables in an expression. If <c>false</c> Evaluate is not callable.
-        /// By default : true
+        /// If <c>true</c> ScriptEvaluate function is callables in an expression.<para/>
+        /// If <c>false</c> Evaluate is not callable.<para/>
+        /// By default : true<para/>
         /// if set to false for security (also ensure that ExpressionEvaluator type is in TypesToBlock list)
         /// </summary>
         public bool OptionScriptEvaluateFunctionActive { get; set; } = true;
 
         /// <summary>
-        /// If <c>ReturnAutomaticallyLastEvaluatedExpression</c> ScriptEvaluate return automatically the last evaluated expression if no return keyword is met.
-        /// If <c>ReturnNull</c> return null if no return keyword is met.
-        /// If <c>ThrowSyntaxException</c> a exception is throw if no return keyword is met.
+        /// Set How to react when the keyword return is not found in a script. when using ScriptEvaluate method<para/>
+        /// If <c>ReturnAutomaticallyLastEvaluatedExpression</c> ScriptEvaluate return automatically the last evaluated expression if no return keyword is met.<para/>
+        /// If <c>ReturnNull</c> return null if no return keyword is met.<para/>
+        /// If <c>ThrowSyntaxException</c> a exception is throw if no return keyword is met.<para/>
         /// By default : ReturnAutomaticallyLastEvaluatedExpression;
         /// </summary>
         public OptionOnNoReturnKeywordFoundInScriptAction OptionOnNoReturnKeywordFoundInScriptAction { get; set; }
 
         /// <summary>
-        /// If <c>true</c> ScriptEvaluate need to have a semicolon [;] after each expression.
-        /// If <c>false</c> Allow to omit the semicolon for the last expression of the script.
+        /// If <c>true</c> ScriptEvaluate need to have a semicolon [;] after each expression.<para/>
+        /// If <c>false</c> Allow to omit the semicolon for the last expression of the script.<para/>
         /// Default : true
         /// </summary>
         public bool OptionScriptNeedSemicolonAtTheEndOfLastExpression { get; set; } = true;
 
         /// <summary>
-        /// If <c>true</c> Allow to access fields, properties and methods that are not declared public. (private, protected and internal)
-        /// If <c>false</c> Allow to access only to public members.
-        /// Default : false
+        /// If <c>true</c> Allow to access fields, properties and methods that are not declared public. (private, protected and internal)<para/>
+        /// If <c>false</c> Allow to access only to public members.<para/>
+        /// Default : false<para/>
         /// Warning : This clearly break the encapsulation principle use this only if you know what you do.
         /// </summary>
         public bool OptionAllowNonPublicMembersAccess { get; set; }
 
         /// <summary>
-        /// If <c>true</c> On unsuccessful call to an extension method, all defined overloads of that method are detected to resolve whether method is defined and called with wrong arguments or method is not defined.
-        /// If <c>false</c> Unsucessful call to an extension method will always result in "Method {name} is not defined on type {type}"
+        /// If <c>true</c> On unsuccessful call to an extension method, all defined overloads of that method are detected to resolve whether method is defined and called with wrong arguments or method is not defined.<para/>
+        /// If <c>false</c> Unsucessful call to an extension method will always result in "Method {name} is not defined on type {type}"<para/>
         /// Default : true
         /// </summary>
         public bool OptionDetectExtensionMethodsOverloadsOnExtensionMethodNotFound { get; set; } = true;
 
         /// <summary>
         /// If <c>true</c> Allow to define multi expression lambda in Expressions (not in script)<para/>
-        /// If <c>false</c> Can only define simple expression lambda if not in script
-        /// <para>Default value : <c>true</c></para>
+        /// If <c>false</c> Can only define simple expression lambda if not in script<para/>
+        /// Default value : <c>true</c>
         /// </summary>
         public bool OptionCanDeclareMultiExpressionsLambdaInSimpleExpressionEvaluate { get; set; } = true;
 
@@ -904,14 +916,15 @@ namespace CodingSeb.ExpressionEvaluator
         private int evaluationStackCount;
 
         /// <summary>
-        /// The values of the variable use in the expressions
+        /// A Dictionary of variable name/value that can be use in expressions and scripts evaluate by the current instance of <see cref="ExpressionEvaluator"/><para/>
+        /// Warning : Make a copy of the given dictionary to manage casing.
         /// </summary>
         public IDictionary<string, object> Variables
         {
             get { return variables; }
             set
             {
-                if(OptionVariablesPersistenceCustomComparer)
+                if (OptionVariablesPersistenceCustomComparer)
                 {
                     variables = value;
                 }
@@ -923,52 +936,64 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Is fired just before an expression is evaluate.
+        /// Is fired just before a script is evaluate.<para/>
+        /// Allow to redefine the script to evaluate or to force a result value.
+        /// </summary>
+        public event EventHandler<ExpressionEvaluationEventArg> ScriptEvaluating;
+
+        /// <summary>
+        /// Is fired just before to return the script evaluation.<para/>
+        /// Allow to modify on the fly the result of the evaluation.
+        /// </summary>
+        public event EventHandler<ExpressionEvaluationEventArg> ScriptEvaluated;
+
+        /// <summary>
+        /// Is fired just before an expression is evaluate.<para/>
         /// Allow to redefine the expression to evaluate or to force a result value.
         /// </summary>
         public event EventHandler<ExpressionEvaluationEventArg> ExpressionEvaluating;
 
         /// <summary>
-        /// Is fired just before to return the expression evaluation.
+        /// Is fired just before to return the expression evaluation.<para/>
         /// Allow to modify on the fly the result of the evaluation.
         /// </summary>
         public event EventHandler<ExpressionEvaluationEventArg> ExpressionEvaluated;
 
         /// <summary>
-        /// Is fired before a variable, field or property resolution.
-        /// Allow to define a variable and the corresponding value on the fly.
+        /// Is fired before a variable, field or property resolution.<para/>
+        /// Allow to define a variable and the corresponding value on the fly.<para/>
         /// Allow also to cancel the evaluation of this variable (consider it does'nt exists)
         /// </summary>
         public event EventHandler<VariablePreEvaluationEventArg> PreEvaluateVariable;
 
         /// <summary>
-        /// Is fired before a function or method resolution.
-        /// Allow to define a function or method and the corresponding value on the fly.
+        /// Is fired before a function or method resolution.<para/>
+        /// Allow to define a function or method and the corresponding value on the fly.<para/>
         /// Allow also to cancel the evaluation of this function (consider it does'nt exists)
         /// </summary>
         public event EventHandler<FunctionPreEvaluationEventArg> PreEvaluateFunction;
 
         /// <summary>
-        /// Is fired before a indexing resolution.
-        /// Allow to define an indexing and the corresponding value on the fly.
+        /// Is fired before a indexing resolution.<para/>
+        /// Allow to define an indexing and the corresponding value on the fly.<para/>
         /// Allow also to cancel the evaluation of this indexing (consider it does'nt exists)
         /// </summary>
         public event EventHandler<IndexingPreEvaluationEventArg> PreEvaluateIndexing;
 
         /// <summary>
-        /// Is fired if no variable, field or property were found
+        /// Is fired if no variable, field or property were found.<para/>
         /// Allow to define a variable and the corresponding value on the fly.
         /// </summary>
         public event EventHandler<VariableEvaluationEventArg> EvaluateVariable;
 
         /// <summary>
-        /// Is fired if no function or method were found.
+        /// Is fired if no function or method were found.<para/>
         /// Allow to define a function or method and the corresponding value on the fly.
         /// </summary>
         public event EventHandler<FunctionEvaluationEventArg> EvaluateFunction;
 
         /// <summary>
-        /// Is fired when a parameter is not of the correct type for the function.
+        /// Is fired when a parameter is not of the correct type for the function.<para/>
         /// Allow to define a custom parameter cast to make the function call work on the fly.
         /// </summary>
         public event EventHandler<ParameterCastEvaluationEventArg> EvaluateParameterCast;
@@ -1059,9 +1084,8 @@ namespace CodingSeb.ExpressionEvaluator
         protected bool inScript;
 
         /// <summary>
-        /// Evaluate a script (multiple expressions separated by semicolon)
-        /// Support Assignation with [=] (for simple variable write in the Variables dictionary)
-        /// support also if, else if, else while and for keywords
+        /// Evaluate a script (multiple expressions separated by semicolon)<para/>
+        /// support some conditional, loop and other C# code flow management keywords
         /// </summary>
         /// <typeparam name="T">The type in which to cast the result of the expression</typeparam>
         /// <param name="script">the script to evaluate</param>
@@ -1072,15 +1096,21 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Evaluate a script (multiple expressions separated by semicolon)
-        /// Support Assignation with [=] (for simple variable write in the Variables dictionary)
-        /// support also if, else if, else while and for keywords
+        /// Evaluate a script (multiple expressions separated by semicolon)<para/>
+        /// support some conditional, loop and other C# code flow management keywords
         /// </summary>
         /// <param name="script">the script to evaluate</param>
         /// <returns>The result of the last evaluated expression</returns>
         public virtual object ScriptEvaluate(string script)
         {
             inScript = true;
+
+            ExpressionEvaluationEventArg expressionEvaluationEventArg = new ExpressionEvaluationEventArg(script, this);
+
+            ScriptEvaluating?.Invoke(this, expressionEvaluationEventArg);
+
+            script = expressionEvaluationEventArg.Expression;
+
             try
             {
                 bool isReturn = false;
@@ -1090,11 +1120,26 @@ namespace CodingSeb.ExpressionEvaluator
                 object result = ScriptEvaluate(script, ref isReturn, ref isBreak, ref isContinue);
 
                 if (isBreak)
+                {
                     throw new ExpressionEvaluatorSyntaxErrorException("[break] keyword executed outside a loop");
+                }
                 else if (isContinue)
+                {
                     throw new ExpressionEvaluatorSyntaxErrorException("[continue] keyword executed outside a loop");
+                }
                 else
+                {
+                    expressionEvaluationEventArg = new ExpressionEvaluationEventArg(script, this, result);
+
+                    ScriptEvaluated?.Invoke(this, expressionEvaluationEventArg);
+
+                    if (expressionEvaluationEventArg.HasValue)
+                    {
+                        result = expressionEvaluationEventArg.Value;
+                    }
+
                     return result;
+                }
             }
             finally
             {
@@ -2208,7 +2253,7 @@ namespace CodingSeb.ExpressionEvaluator
                         else if (Variables.TryGetValue(varFuncName, out o) && o is MethodsGroupEncaps methodsGroupEncaps)
                         {
                             List<object> args = funcArgs.ConvertAll(Evaluate);
-                            List<object> modifiedArgs= null;
+                            List<object> modifiedArgs = null;
                             MethodInfo methodInfo = null;
 
                             for (int m = 0; methodInfo == null && m < methodsGroupEncaps.MethodsGroup.Length; m++)
@@ -2218,7 +2263,7 @@ namespace CodingSeb.ExpressionEvaluator
                                 methodInfo = TryToCastMethodParametersToMakeItCallable(methodsGroupEncaps.MethodsGroup[m], modifiedArgs, genericsTypes, new Type[0], methodsGroupEncaps.ContainerObject);
                             }
 
-                            if(methodInfo != null)
+                            if (methodInfo != null)
                                 stack.Push(methodInfo.Invoke(methodsGroupEncaps.ContainerObject, modifiedArgs?.ToArray()));
                         }
                         else
@@ -2315,7 +2360,7 @@ namespace CodingSeb.ExpressionEvaluator
                                     {
                                         MethodInfo[] methodsGroup = objType.GetMember(varFuncName, flag).OfType<MethodInfo>().ToArray();
 
-                                        if(methodsGroup.Length > 0)
+                                        if (methodsGroup.Length > 0)
                                         {
                                             varValue = new MethodsGroupEncaps()
                                             {
@@ -2335,7 +2380,7 @@ namespace CodingSeb.ExpressionEvaluator
                                             pushVarValue = false;
                                     }
 
-									bool isVarValueSet = false;
+                                    bool isVarValueSet = false;
                                     if (member == null && pushVarValue)
                                     {
                                         VariableEvaluationEventArg variableEvaluationEventArg = new VariableEvaluationEventArg(varFuncName, this, obj ?? keepObj, genericsTypes, GetConcreteTypes);
@@ -2345,7 +2390,7 @@ namespace CodingSeb.ExpressionEvaluator
                                         if (variableEvaluationEventArg.HasValue)
                                         {
                                             varValue = variableEvaluationEventArg.Value;
-											isVarValueSet = true;
+                                            isVarValueSet = true;
                                         }
                                     }
 
@@ -2558,9 +2603,9 @@ namespace CodingSeb.ExpressionEvaluator
             }
         }
 
-        protected virtual Type EvaluateType(string expression,ref int i, string currentName = "", string genericsTypes = "")
+        protected virtual Type EvaluateType(string expression, ref int i, string currentName = "", string genericsTypes = "")
         {
-            string typeName = $"{currentName}{((i < expression.Length && expression.Substring(i)[0] == '?') ? "?" : "") }";
+            string typeName = $"{currentName}{((i < expression.Length && expression.Substring(i)[0] == '?') ? "?" : "")}";
             Type staticType = GetTypeByFriendlyName(typeName, genericsTypes);
 
             // For inline namespace parsing
@@ -2581,13 +2626,13 @@ namespace CodingSeb.ExpressionEvaluator
                         && !typeName.EndsWith("?"))
                     {
                         subIndex += namespaceMatch.Length;
-                        typeName += $"{namespaceMatch.Groups["inObject"].Value}{namespaceMatch.Groups["name"].Value}{((i + subIndex < expression.Length && expression.Substring(i + subIndex)[0] == '?') ? "?" : "") }";
+                        typeName += $"{namespaceMatch.Groups["inObject"].Value}{namespaceMatch.Groups["name"].Value}{((i + subIndex < expression.Length && expression.Substring(i + subIndex)[0] == '?') ? "?" : "")}";
 
                         staticType = GetTypeByFriendlyName(typeName, namespaceMatch.Groups["isgeneric"].Value);
 
                         if (staticType != null)
                         {
-                            if((OptionInlineNamespacesEvaluationRule == InlineNamespacesEvaluationRule.BlockOnlyInlineNamespacesList && InlineNamespacesList.Contains(staticType.Namespace))
+                            if ((OptionInlineNamespacesEvaluationRule == InlineNamespacesEvaluationRule.BlockOnlyInlineNamespacesList && InlineNamespacesList.Contains(staticType.Namespace))
                                 || (OptionInlineNamespacesEvaluationRule == InlineNamespacesEvaluationRule.AllowOnlyInlineNamespacesList && !InlineNamespacesList.Contains(staticType.Namespace)))
                             {
                                 staticType = null;
@@ -2602,8 +2647,6 @@ namespace CodingSeb.ExpressionEvaluator
 
                         namespaceMatch = varOrFunctionRegEx.Match(expression.Substring(i + subIndex));
                     }
-
-
                 }
                 else
                 {
@@ -2621,7 +2664,7 @@ namespace CodingSeb.ExpressionEvaluator
                         && !typeName.EndsWith("?"))
                     {
                         subIndex += typeMatch.Length;
-                        typeName += $"{typeMatch.Groups["name"].Value}{((i + subIndex < expression.Length && expression.Substring(i + subIndex)[0] == '?') ? "?" : "") }";
+                        typeName += $"{typeMatch.Groups["name"].Value}{((i + subIndex < expression.Length && expression.Substring(i + subIndex)[0] == '?') ? "?" : "")}";
 
                         staticType = GetTypeByFriendlyName(typeName, typeMatch.Groups["isgeneric"].Value);
 
@@ -2648,7 +2691,7 @@ namespace CodingSeb.ExpressionEvaluator
                     && !nestedTypeMatch.Groups["isfunction"].Success)
                 {
                     subIndex = nestedTypeMatch.Length;
-                    typeName += $"+{nestedTypeMatch.Groups["name"].Value}{((i + subIndex < expression.Length && expression.Substring(i + subIndex)[0] == '?') ? "?" : "") }";
+                    typeName += $"+{nestedTypeMatch.Groups["name"].Value}{((i + subIndex < expression.Length && expression.Substring(i + subIndex)[0] == '?') ? "?" : "")}";
 
                     Type nestedType = GetTypeByFriendlyName(typeName, nestedTypeMatch.Groups["isgeneric"].Value);
                     if (nestedType != null)
@@ -2670,10 +2713,10 @@ namespace CodingSeb.ExpressionEvaluator
 
             Match arrayTypeMatch;
 
-            if(i < expression.Length && (arrayTypeMatch = arrayTypeDetectionRegex.Match(expression.Substring(i))).Success)
+            if (i < expression.Length && (arrayTypeMatch = arrayTypeDetectionRegex.Match(expression.Substring(i))).Success)
             {
                 Type arrayType = GetTypeByFriendlyName(staticType + arrayTypeMatch.Value);
-                if(arrayType != null)
+                if (arrayType != null)
                 {
                     i += arrayTypeMatch.Length;
                     staticType = arrayType;
@@ -2747,12 +2790,11 @@ namespace CodingSeb.ExpressionEvaluator
             {
                 string op = match.Value;
 
-                if (op.Equals("+") && (stack.Count == 0 || (stack.Peek() is ExpressionOperator previousOp && !LeftOperandOnlyOperatorsEvaluationDictionary.Contains(previousOp))))
-                    stack.Push(ExpressionOperator.UnaryPlus);
-                else if (op.Equals("-") && (stack.Count == 0 || (stack.Peek() is ExpressionOperator previousOp2 && !LeftOperandOnlyOperatorsEvaluationDictionary.Contains(previousOp2))))
-                    stack.Push(ExpressionOperator.UnaryMinus);
+                if (unaryOperatorsDictionary.ContainsKey(op) && (stack.Count == 0 || (stack.Peek() is ExpressionOperator previousOp && !LeftOperandOnlyOperatorsEvaluationDictionary.Contains(previousOp))))
+                    stack.Push(unaryOperatorsDictionary[op]);
                 else
                     stack.Push(operatorsDictionary[op]);
+
                 i += op.Length - 1;
                 return true;
             }
@@ -2871,7 +2913,7 @@ namespace CodingSeb.ExpressionEvaluator
                     stack.Push(left);
                     return true;
                 }
-                else if(indexingBeginningMatch.Groups["nullConditional"].Success && left == null)
+                else if (indexingBeginningMatch.Groups["nullConditional"].Success && left == null)
                 {
                     stack.Push(new NullConditionalNullValue());
                     return true;
@@ -2900,7 +2942,7 @@ namespace CodingSeb.ExpressionEvaluator
                     {
                         Type type = ((object)left).GetType();
 
-                        if(type.IsArray && OptionForceIntegerNumbersEvaluationsAsDoubleByDefault)
+                        if (type.IsArray && OptionForceIntegerNumbersEvaluationsAsDoubleByDefault)
                         {
                             oIndexingArgs = oIndexingArgs.ConvertAll(o => o is double ? (int)o : o);
                         }
@@ -3188,7 +3230,7 @@ namespace CodingSeb.ExpressionEvaluator
                                             list[j] = OperatorsEvaluations.FirstOrDefault(od => od.ContainsKey(nextOp))?[nextOp](null, (dynamic)list[j - 1]);
 
                                             list.RemoveAt(j - 1);
-                                            parentIndex=j;
+                                            parentIndex = j;
                                         }
                                     }
 
@@ -3369,7 +3411,7 @@ namespace CodingSeb.ExpressionEvaluator
 
             if (rightExpression.Trim().Equals(string.Empty))
                 throw new ExpressionEvaluatorSyntaxErrorException("Right part is missing in assignation");
-            
+
             if (match.Groups["assignmentPrefix"].Success)
             {
                 ExpressionOperator prefixOp = operatorsDictionary[match.Groups["assignmentPrefix"].Value];
@@ -3413,7 +3455,7 @@ namespace CodingSeb.ExpressionEvaluator
                     {
                         Variables[varName] = Convert.ChangeType(value, stronglyTypedVariable.Type);
                     }
-                    catch(Exception exception)
+                    catch (Exception exception)
                     {
                         throw new InvalidCastException($"A object of type {typeToAssign} can not be cast implicitely in {stronglyTypedVariable.Type}", exception);
                     }
@@ -3596,7 +3638,7 @@ namespace CodingSeb.ExpressionEvaluator
                 Type[] genericArgsTypes = oldMethodInfo.GetGenericArguments();
                 List<Type> inferedTypes = new List<Type>();
 
-                for (int t = 0; t<genericArgsTypes.Length; t++)
+                for (int t = 0; t < genericArgsTypes.Length; t++)
                 {
                     if (genericArgsTypes[t].IsGenericParameter)
                     {
@@ -3624,33 +3666,33 @@ namespace CodingSeb.ExpressionEvaluator
                             {
                                 if (modifiedArgs[paramsForInference.Position] is MethodsGroupEncaps methodsGroupEncaps)
                                 {
-                                    if(paramsForInference.ParameterType.Name.StartsWith("Converter"))
+                                    if (paramsForInference.ParameterType.Name.StartsWith("Converter"))
                                     {
                                         Type specificType = Array.Find(paramsForInference.ParameterType.GetGenericArguments(), pType => pType.Name.Equals(name));
                                         MethodInfo paraMethodInfo = Array.Find(methodsGroupEncaps.MethodsGroup, mi => mi.GetParameters().Length == 1);
-                                        if(specificType?.GenericParameterPosition == 0)
+                                        if (specificType?.GenericParameterPosition == 0)
                                         {
                                             inferedTypes.Add(paraMethodInfo.GetParameters()[0].ParameterType);
                                         }
-                                        else if(specificType?.GenericParameterPosition == 1)
+                                        else if (specificType?.GenericParameterPosition == 1)
                                         {
                                             inferedTypes.Add(paraMethodInfo.ReturnType);
                                         }
                                     }
-                                    else if(paramsForInference.ParameterType.Name.StartsWith("Action"))
+                                    else if (paramsForInference.ParameterType.Name.StartsWith("Action"))
                                     {
                                         Type specificType = Array.Find(paramsForInference.ParameterType.GetGenericArguments(), pType => pType.Name.Equals(name));
                                         MethodInfo paraMethodInfo = Array.Find(methodsGroupEncaps.MethodsGroup, mi => mi.GetParameters().Length == paramsForInference.ParameterType.GetGenericArguments().Length);
-                                        if(specificType != null)
+                                        if (specificType != null)
                                         {
                                             inferedTypes.Add(paraMethodInfo.GetParameters()[specificType.GenericParameterPosition].ParameterType);
                                         }
                                     }
-                                    else if(paramsForInference.ParameterType.Name.StartsWith("Func"))
+                                    else if (paramsForInference.ParameterType.Name.StartsWith("Func"))
                                     {
                                         Type specificType = Array.Find(paramsForInference.ParameterType.GetGenericArguments(), pType => pType.Name.Equals(name));
                                         MethodInfo paraMethodInfo = Array.Find(methodsGroupEncaps.MethodsGroup, mi => mi.GetParameters().Length == paramsForInference.ParameterType.GetGenericArguments().Length - 1);
-                                        if(specificType?.GenericParameterPosition == paraMethodInfo.GetParameters().Length)
+                                        if (specificType?.GenericParameterPosition == paraMethodInfo.GetParameters().Length)
                                         {
                                             inferedTypes.Add(paraMethodInfo.ReturnType);
                                         }
@@ -3673,7 +3715,7 @@ namespace CodingSeb.ExpressionEvaluator
                     }
                 }
 
-                if(inferedTypes.Count > 0 && inferedTypes.Count == genericArgsTypes.Length)
+                if (inferedTypes.Count > 0 && inferedTypes.Count == genericArgsTypes.Length)
                     methodInfoToCast = MakeConcreteMethodIfGeneric(oldMethodInfo, genericsTypes, inferedTypes.ToArray());
                 else
                     methodInfoToCast = MakeConcreteMethodIfGeneric(methodInfoToCast, genericsTypes, inferedGenericsTypes);
@@ -3828,7 +3870,15 @@ namespace CodingSeb.ExpressionEvaluator
                                 }
                                 else
                                 {
-                                    parametersCastOK = false;
+                                    var converter = parameterType.GetMethod("op_Implicit", new[] { modifiedArgs[a].GetType() });
+                                    if (converter != null)
+                                    {
+                                        modifiedArgs[a] = converter.Invoke(null, new[] { modifiedArgs[a] });
+                                    }
+                                    else
+                                    {
+                                        parametersCastOK = false;
+                                    }
                                 }
                             }
                         }
@@ -3852,7 +3902,7 @@ namespace CodingSeb.ExpressionEvaluator
                                 parametersCastOK = true;
                             }
                         }
-                        catch {}
+                        catch { }
                     }
                 }
             }
@@ -4109,7 +4159,7 @@ namespace CodingSeb.ExpressionEvaluator
                     if (!genericTypes.Equals(string.Empty))
                     {
                         Type[] types = GetConcreteTypes(genericTypes);
-                        formatedGenericTypes = $"`{types.Length}[{ string.Join(", ", types.Select(type => "[" + type.AssemblyQualifiedName + "]"))}]";
+                        formatedGenericTypes = $"`{types.Length}[{string.Join(", ", types.Select(type => "[" + type.AssemblyQualifiedName + "]"))}]";
                     }
 
                     result = Type.GetType(typeName + formatedGenericTypes, false, !OptionCaseSensitiveEvaluationActive);
@@ -4170,7 +4220,7 @@ namespace CodingSeb.ExpressionEvaluator
                 NullableConverter nullableConverter = new NullableConverter(conversionType);
                 conversionType = nullableConverter.UnderlyingType;
             }
-            if(conversionType.IsEnum)
+            if (conversionType.IsEnum)
             {
                 return Enum.ToObject(conversionType, value);
             }
@@ -4179,7 +4229,7 @@ namespace CodingSeb.ExpressionEvaluator
             {
                 return primitiveExplicitCastMethodInfo
                     .MakeGenericMethod(conversionType)
-                    .Invoke(null, new object[] {value});
+                    .Invoke(null, new object[] { value });
             }
 
             if (DynamicCast(value, conversionType, out object ret))
@@ -4203,7 +4253,7 @@ namespace CodingSeb.ExpressionEvaluator
             if (srcType == destType) { result = source; return true; }
             result = null;
 
-            BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy;
+            const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy;
             MethodInfo castOperator = destType.GetMethods(bindingFlags)
                                         .Union(srcType.GetMethods(bindingFlags))
                                         .Where(methodInfo => methodInfo.Name == "op_Explicit" || methodInfo.Name == "op_Implicit")
@@ -4212,12 +4262,11 @@ namespace CodingSeb.ExpressionEvaluator
                                             var pars = methodInfo.GetParameters();
                                             return pars.Length == 1 && pars[0].ParameterType == srcType;
                                         })
-                                        .Where(mi => mi.ReturnType == destType)
-                                        .FirstOrDefault();
+                                        .FirstOrDefault(mi => mi.ReturnType == destType);
 
-            if (castOperator != null) 
+            if (castOperator != null)
                 result = castOperator.Invoke(null, new object[] { source });
-            else 
+            else
                 return false;
 
             return true;
@@ -4537,13 +4586,32 @@ namespace CodingSeb.ExpressionEvaluator
 
     #region linked enums
 
+    /// <summary>
+    /// This enum represent the way <see cref="ExpressionEvaluator.ScriptEvaluate(string)"/> behave when no <c>return</c> keyword is found.<para/>
+    /// Used for the option <see cref="ExpressionEvaluator.OptionOnNoReturnKeywordFoundInScriptAction"/>
+    /// </summary>
     public enum OptionOnNoReturnKeywordFoundInScriptAction
     {
+        /// <summary>
+        /// ScriptEvaluate return automatically the last evaluated expression if no return keyword is met.
+        /// </summary>
         ReturnAutomaticallyLastEvaluatedExpression,
+
+        /// <summary>
+        ///  ScriptEvaluate Return null if no return keyword is met.
+        /// </summary>
         ReturnNull,
+
+        /// <summary>
+        /// A exception is throw if no return keyword is met.
+        /// </summary>
         ThrowSyntaxException
     }
 
+    /// <summary>
+    /// This enum define the rules to use to allow or block inline namespaces.<para />
+    /// Used for the option <see cref="ExpressionEvaluator.OptionInlineNamespacesEvaluationRule"/>
+    /// </summary>
     public enum InlineNamespacesEvaluationRule
     {
         /// <summary>
@@ -4711,6 +4779,7 @@ namespace CodingSeb.ExpressionEvaluator
     #endregion
 
     public partial class ClassOrEnumType
+
     {
         public Type Type { get; set; }
     }
@@ -4732,15 +4801,32 @@ namespace CodingSeb.ExpressionEvaluator
         }
     }
 
+    /// <summary>
+    /// Represent a group of method on which the override to call is not yet known.<para/>
+    /// Simulate delegates
+    /// </summary>
     public partial class MethodsGroupEncaps
     {
+        /// <summary>
+        /// The instance of the object on which the method group is define
+        /// </summary>
         public object ContainerObject { get; set; }
 
+        /// <summary>
+        /// An array of methods overrides infos that could be potentially use for call
+        /// </summary>
         public MethodInfo[] MethodsGroup { get; set; }
     }
 
+    /// <summary>
+    /// Encapsulate an exception that happend in a sub part of the expression when the evaluation need to continue before throwing the exception.
+    /// </summary>
     public partial class BubbleExceptionContainer
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="exception">the exception to encapsulate</param>
         public BubbleExceptionContainer(Exception exception)
         {
             _dispatchInfo = ExceptionDispatchInfo.Capture(exception);
@@ -4748,6 +4834,9 @@ namespace CodingSeb.ExpressionEvaluator
 
         private readonly ExceptionDispatchInfo _dispatchInfo;
 
+        /// <summary>
+        /// Rethrow the exception with proper context.
+        /// </summary>
         public void Throw() => _dispatchInfo.Throw();
     }
 
@@ -4821,12 +4910,13 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// if <c>true</c> the variable is affected, if <c>false</c> it means that the variable does not exist.
+        /// if <c>true</c> the variable is affected<para/>
+        /// if <c>false</c> it means that the variable does not exist.
         /// </summary>
         public bool HasValue { get; set; }
 
         /// <summary>
-        /// In the case of on the fly instance property definition the instance of the object on which this Property is called.
+        /// In the case of on the fly instance property definition the instance of the object on which this Property is called.<para/>
         /// Otherwise is set to null.
         /// </summary>
         public object This { get; }
@@ -4837,7 +4927,7 @@ namespace CodingSeb.ExpressionEvaluator
         public ExpressionEvaluator Evaluator { get; }
 
         /// <summary>
-        /// Is <c>true</c> if some generic types are specified with &lt;&gt;.
+        /// Is <c>true</c> if some generic types are specified with &lt;&gt;.<para/>
         /// <c>false</c> otherwise
         /// </summary>
         public bool HasGenericTypes
@@ -4849,7 +4939,7 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// In the case where generic types are specified with &lt;&gt;
+        /// In the case where generic types are specified with &lt;&gt;<para/>
         /// Evaluate all types and return an array of types
         /// </summary>
         public Type[] EvaluateGenericTypes()
@@ -4915,7 +5005,8 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// if <c>true</c> the expression evaluation has been done, if <c>false</c> it means that the evaluation must continue.
+        /// if <c>true</c> the expression evaluation has been done<para/>
+        /// if <c>false</c> it means that the evaluation must continue.
         /// </summary>
         public bool HasValue { get; set; }
     }
@@ -5018,12 +5109,13 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// if <c>true</c> the function evaluation has been done, if <c>false</c> it means that the function does not exist.
+        /// if <c>true</c> the function evaluation has been done,<para/>
+        /// if <c>false</c> it means that the function does not exist.
         /// </summary>
         public bool FunctionReturnedValue { get; set; }
 
         /// <summary>
-        /// In the case of on the fly instance method definition the instance of the object on which this method (function) is called.
+        /// In the case of on the fly instance method definition the instance of the object on which this method (function) is called.<para/>
         /// Otherwise is set to null.
         /// </summary>
         public object This { get; }
@@ -5034,7 +5126,7 @@ namespace CodingSeb.ExpressionEvaluator
         public ExpressionEvaluator Evaluator { get; }
 
         /// <summary>
-        /// Is <c>true</c> if some generic types are specified with &lt;&gt;.
+        /// Is <c>true</c> if some generic types are specified with &lt;&gt;.<para/>
         /// <c>false</c> otherwise
         /// </summary>
         public bool HasGenericTypes
@@ -5046,7 +5138,7 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// In the case where generic types are specified with &lt;&gt;
+        /// In the case where generic types are specified with &lt;&gt;<para/>
         /// Evaluate all types and return an array of types
         /// </summary>
         public Type[] EvaluateGenericTypes()
@@ -5075,6 +5167,12 @@ namespace CodingSeb.ExpressionEvaluator
     /// </summary>
     public partial class IndexingPreEvaluationEventArg : EventArgs
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="args">The not evaluated args of the indexing</param>
+        /// <param name="evaluator">A reference on the current expression evaluator.</param>
+        /// <param name="onInstance">The instance of the object on which the indexing is called.<para/>Will be the <see cref="This"/> property</param>
         public IndexingPreEvaluationEventArg(List<string> args, ExpressionEvaluator evaluator, object onInstance)
         {
             Args = args;
@@ -5108,7 +5206,8 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// if <c>true</c> the indexing evaluation has been done, if <c>false</c> it means that the indexing does not exist.
+        /// if <c>true</c> the indexing evaluation has been done<para/>
+        /// if <c>false</c> it means that the indexing does not exist.
         /// </summary>
         public bool HasValue { get; set; }
 
@@ -5148,15 +5247,14 @@ namespace CodingSeb.ExpressionEvaluator
         }
 
         /// <summary>
-        /// If set to true cancel the evaluation of the current function or method and throw an exception that the function does not exists
+        /// If set to <c>true</c> cancel the evaluation of the current function or method and throw an exception that the function does not exists
         /// </summary>
         public bool CancelEvaluation { get; set; }
     }
 
     /// <summary>
-    /// Class ParameterCastEvaluationEventArg.
-    /// Implements the <see cref="System.EventArgs" /></summary>
-    /// <seealso cref="System.EventArgs" />
+    /// Class ParameterCastEvaluationEventArg
+    /// </summary>
     public partial class ParameterCastEvaluationEventArg : EventArgs
     {
         /// <summary>
@@ -5165,7 +5263,7 @@ namespace CodingSeb.ExpressionEvaluator
         public MethodInfo MethodInfo { get; }
 
         /// <summary>
-        /// In the case of on the fly instance method definition the instance of the object on which this method (function) is called.
+        /// In the case of on the fly instance method definition the instance of the object on which this method (function) is called.<para/>
         /// Otherwise is set to null.
         /// </summary>
         public object This { get; }
@@ -5190,6 +5288,15 @@ namespace CodingSeb.ExpressionEvaluator
         /// </summary>
         public int ArgPosition { get; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="methodInfo">The information of the method that it try to call</param>
+        /// <param name="parameterType">The required type of the parameter</param>
+        /// <param name="originalArg">The original argument</param>
+        /// <param name="argPosition">Position of the argument (index from 0)</param>
+        /// <param name="evaluator">A reference on the current expression evaluator.</param>
+        /// <param name="onInstance">In the case of on the fly instance method definition the instance of the object on which this method (function) is called.<para/>Otherwise is set to null.<para/>Will be the <see cref="This"/> property</param>
         public ParameterCastEvaluationEventArg(MethodInfo methodInfo, Type parameterType, object originalArg, int argPosition, ExpressionEvaluator evaluator = null, object onInstance = null)
         {
             MethodInfo = methodInfo;
@@ -5223,3 +5330,4 @@ namespace CodingSeb.ExpressionEvaluator
 
     #endregion
 }
+#endif
