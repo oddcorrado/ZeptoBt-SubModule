@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using StaticEvalFloat;
 using UnityEngine;
 
 /* 
@@ -277,7 +278,7 @@ namespace ZeptoBt
         };
 
 
-        private NodeParam<string> thresholds = new NodeParam<string>("tnn");
+        private string thresholds = "tnn";
         private NodeReturn previousChildState = NodeReturn.Unprocessed;
 
         public override string[] Params
@@ -287,7 +288,7 @@ namespace ZeptoBt
             {
                 base.Params = value;
 
-                if (base.Params.Length > 0) thresholds.Set(base.Params[0]);
+                if (base.Params.Length > 0) thresholds = base.Params[0];
             }
         }
 
@@ -307,7 +308,7 @@ namespace ZeptoBt
                 return;
             }
 
-            var th = thresholds.Get(Root.Evaluator);
+            var th = ""; // FIX ME PARAMS thresholds.Get(Root.Evaluator);
  
             if (th.Length != 3)
             {
@@ -510,13 +511,13 @@ namespace ZeptoBt
             {
                 base.Params = value;
                 if (base.Params.Length > 0) dd.Set(base.Params[0]);
-                if (base.Params.Length > 1) mm.Set(base.Params[1]);
+                if (base.Params.Length > 1) mm = base.Params[1];
             }
         }
 
 
-        NodeParam<float> dd = new NodeParam<float>();
-        NodeParam<Mode> mm = new NodeParam<Mode>();
+        NodeParam dd = new NodeParam();
+        string mm = "";
         enum WaitStatus { Idle, Running, Done }
         WaitStatus waitStatus;
         private float stopDate;
@@ -541,11 +542,11 @@ namespace ZeptoBt
                         Debug.Log("dd Root " + Root);
                         stopDate = Tree.CurrentTime + dd.Get(Root.Evaluator);
                         waitStatus = WaitStatus.Running;
-                        Status = (mm.Get(Root.Evaluator) == Mode.Block) ? NodeReturn.Runnning : NodeReturn.Runnning;
+                        Status = mm == "Block" ? NodeReturn.Runnning : NodeReturn.Runnning;  // FIXME PARAMS (mm.Get(Root.Evaluator) == Mode.Block) ? NodeReturn.Runnning : NodeReturn.Runnning;
                         return;
                     }
                 case WaitStatus.Running:
-                    if (mm.Get(Root.Evaluator) == Mode.Block)
+                    if (mm == "Block" /* FIXME PARAMS .Get(Root.Evaluator) == Mode.Block */)
                     {
                         if (Tree.CurrentTime > stopDate)
                         {
@@ -648,14 +649,15 @@ namespace ZeptoBt
             /// Debug.Log($"BT EVAL before zzz={Root.Evaluator.Variables["zzz"]}");
             /// 
             //Debug.Log("EXP " + expression);
-            var result = Root.Evaluator.Evaluate(expression);
+            var e = EvaluatorFloat.GetEvaluator(expression);
+            float result = Root.Evaluator.Evaluate();
 
             // Debug.Log($"BT TICK - {this} result={result}");
             // Debug.Log($"BT EVAL after zzz={Root.Evaluator.Variables["zzz"]}");
 
-            if (result.GetType() == typeof(bool))
+            /* if (result.GetType() == typeof(bool))
                 Status = (bool)result ? NodeReturn.Success : NodeReturn.Failure;
-            else
+            else */
                 Status = NodeReturn.Success;
         }
 

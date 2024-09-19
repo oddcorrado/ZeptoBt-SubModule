@@ -1,3 +1,7 @@
+public partial class ExpressionEvaluator
+{ }
+
+#if CIAO
 /******************************************************************************************************
     Title : ExpressionEvaluator (https://github.com/codingseb/ExpressionEvaluator)
     Version : 1.4.38.0 
@@ -5223,3 +5227,4 @@ namespace CodingSeb.ExpressionEvaluator
 
     #endregion
 }
+#endif

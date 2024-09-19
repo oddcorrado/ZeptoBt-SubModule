@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UnityEngine.EventSystems;
-using CodingSeb.ExpressionEvaluator;
+
 
 public class ZeptoBtViewer : MonoBehaviour
 {
@@ -69,18 +69,18 @@ public class ZeptoBtViewer : MonoBehaviour
         get => root;
         set
         {
-            if(Root != null && (Root as NodeRoot).Evaluator != null)
-                (Root as NodeRoot).Evaluator.ExpressionEvaluated -= VariableUpdate;
+            // if(Root != null && (Root as NodeRoot).Evaluator != null)
+            //     (Root as NodeRoot).Evaluator.ExpressionEvaluated -= VariableUpdate;
             root = value;
             Tree = root.Tree;
             history = new List<string>();
-            if(Root != null)
-                (Root as NodeRoot).Evaluator.ExpressionEvaluated += VariableUpdate;
+            // if(Root != null)
+            //     (Root as NodeRoot).Evaluator.ExpressionEvaluated += VariableUpdate;
             Reset();
         }
     }
 
-    void VariableUpdate(object sender, ExpressionEvaluationEventArg e)
+    /* void VariableUpdate(object sender, ExpressionEvaluationEventArg e)
     {
         var str = "";
         foreach (var kvp in (Root as NodeRoot).Evaluator.Variables)
@@ -89,7 +89,7 @@ public class ZeptoBtViewer : MonoBehaviour
             str += $"<#00aaff><b>{kvp.Key}</b><#ffffff> = <#00ffff>{kvp.Value}\n";
         }
         variablesText.text = str;
-    }
+    } */
 
     void Reset(bool addHistory = true)
     {

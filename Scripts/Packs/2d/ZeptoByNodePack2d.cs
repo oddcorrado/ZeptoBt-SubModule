@@ -108,8 +108,8 @@ namespace ZeptoBt.NodePack2d
             }
         }
 
-        private NodeParam<float> vel = new NodeParam<float>(2);
-        private NodeParam<float> radius = new NodeParam<float>(3);
+        private NodeParam vel = new NodeParam(2);
+        private NodeParam radius = new NodeParam(3);
         private float randomTargetUpdateDate;
         Vector2 target;
         Vector2 spawnPos;
@@ -178,24 +178,24 @@ namespace ZeptoBt.NodePack2d
             {
                 base.Params = value;
 
-                if (base.Params.Length > 0) target.Set(base.Params[0]);
+                if (base.Params.Length > 0) target = base.Params[0];
                 if (base.Params.Length > 1) vel.Set(base.Params[1]);
                 if (base.Params.Length > 2) radius.Set(base.Params[2]);
                 if (base.Params.Length > 3) angleStep.Set(base.Params[3]);
             }
         }
 
-        private NodeParam<string> target = new NodeParam<string>("Player");
-        private NodeParam<float> vel = new NodeParam<float>(2);
-        private NodeParam<float> radius = new NodeParam<float>(3);
-        private NodeParam<float> angleStep = new NodeParam<float>(0.1f);
+        private string target = "Player";
+        private NodeParam vel = new NodeParam(2);
+        private NodeParam radius = new NodeParam(3);
+        private NodeParam angleStep = new NodeParam(0.1f);
         private float angle;
 
         public override void Tick()
         {
             // Debug.Log($"BT TICK - {this}");
 
-            var go = Tree.GetTriggerObject(target.Get(Root.Evaluator));
+            var go = Tree.GetTriggerObject(target);
             if (go == null)
             {
                 Status = NodeReturn.Failure;
@@ -286,9 +286,9 @@ namespace ZeptoBt.NodePack2d
             }
         }
 
-        private NodeParam<float> vel = new NodeParam<float>();
-        private NodeParam<float> x = new NodeParam<float>();
-        private NodeParam<float> y = new NodeParam<float>();
+        private NodeParam vel = new NodeParam();
+        private NodeParam x = new NodeParam();
+        private NodeParam y = new NodeParam();
         private string triggerTarget;
         enum Mode { Pos, Trigger, Random }
         private Mode mode;

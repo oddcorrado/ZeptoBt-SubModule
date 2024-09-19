@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CodingSeb.ExpressionEvaluator;
+using StaticEvalFloat;
 using System;
 using UnityEngine;
 
@@ -79,13 +79,13 @@ namespace ZeptoBt
         }
     }
 
-    public class NodeParam<T>
+    public class NodeParam
     {
-        T value;
+        float value;
         string name;
         bool isVar;
 
-        public NodeParam(T init)
+        public NodeParam(float init)
         {
             value = init;
         }
@@ -93,52 +93,29 @@ namespace ZeptoBt
         public NodeParam() { }
         public void Set(string data)
         {
-            if (typeof(T).IsEnum)
+            try
             {
-                try
-                {
-                    value = (T)Enum.Parse(typeof(T), data);
-                    isVar = false;
-                }
-                catch (InvalidCastException e)
-                {
-                    Debug.LogWarning($"Invalid cast {e.Message} @ {data}");
-                    name = data;
-                    isVar = true;
-                }
-                catch (FormatException e)
-                {
-                    Debug.LogWarning($"Invalid format {e.Message} @ {data}");
-                    name = data;
-                    isVar = true;
-                }
+                value = (float)Convert.ChangeType(data, typeof(float));
+                isVar = false;
             }
-            else
+            catch (InvalidCastException e)
             {
-                try
-                {
-                    value = (T)Convert.ChangeType(data, typeof(T));
-                    isVar = false;
-                }
-                catch (InvalidCastException e)
-                {
-                    Debug.LogWarning($"Invalid cast {e.Message} @ {data}");
-                    name = data;
-                    isVar = true;
-                }
-                catch (FormatException e)
-                {
-                    Debug.LogWarning($"Invalid format {e.Message} @ {data}");
-                    name = data;
-                    isVar = true;
-                }
+                Debug.LogWarning($"Invalid cast {e.Message} @ {data}");
+                name = data;
+                isVar = true;
+            }
+            catch (FormatException e)
+            {
+                Debug.LogWarning($"Invalid format {e.Message} @ {data}");
+                name = data;
+                isVar = true;
             }
         }
-        public T Get(CodingSeb.ExpressionEvaluator.ExpressionEvaluator evaluator)
+        public float Get(EvaluatorFloat evaluator)
         {
             if(isVar && evaluator.Variables.ContainsKey(name))
             {
-                return (T)evaluator.Variables[name];
+                return evaluator.Variables[name];
             }
             return value;
         }
@@ -147,7 +124,7 @@ namespace ZeptoBt
     public class NodeRoot : NodeComposite
     {
         public Node CurrentNode { get; set; }
-        public CodingSeb.ExpressionEvaluator.ExpressionEvaluator Evaluator { get; set; } = new CodingSeb.ExpressionEvaluator.ExpressionEvaluator();
+        public EvaluatorFloat Evaluator { get; set; } = new EvaluatorFloat();
 
         public override string Documentation { get; } =
             "<#ff9900><b>[root] : </b><#ffff00>Root Node\n" +
