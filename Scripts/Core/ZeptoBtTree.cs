@@ -199,7 +199,8 @@ public class ZeptoBtTree : MonoBehaviour
     }
     public void EditTree(string StartVariables)
     {
-        List<string> startVar = new List<string>(StartVariables.Split('\n'));
+        if (StartVariables == null || StartVariables == "") return;
+        List<string> startVar = new List<string>(StartVariables.Split('\n'));   
         List<string> currentVar = new List<string>(FileData.Split('\n'));
      
         string pattern = @"\w.+";
