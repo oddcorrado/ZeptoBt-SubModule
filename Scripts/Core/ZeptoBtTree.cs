@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -504,14 +504,14 @@ public class ZeptoBtTree : MonoBehaviour
         CurrentTime = Time.time;
         if (MainBody2D != null)
         {
-            var vel = MainBody2D.velocity;
+            var vel = MainBody2D.linearVelocity;
             if (ApplyVx) vel.x = vel.x * 0.95f + Vx * 0.05f;
             if (ApplyVy) vel.y = vel.y * 0.95f + Vy * 0.05f;
 
             vel.x += ImpulseVx;
             vel.y += ImpulseVy;
 
-            MainBody2D.velocity = vel;
+            MainBody2D.linearVelocity = vel;
 
             ImpulseVx = 0;
             ImpulseVy = 0;
@@ -519,7 +519,7 @@ public class ZeptoBtTree : MonoBehaviour
 
         if (MainBody != null)
         {
-            var vel = MainBody.velocity;
+            var vel = MainBody.linearVelocity;
             if(vel.magnitude > 1) transform.rotation = Quaternion.LookRotation(new Vector3(vel.x, 0, vel.z)); // rotation
 
             if (ApplyVx) vel.x = vel.x * velocitySmoothing + Vx * (1 - velocitySmoothing);
@@ -530,7 +530,7 @@ public class ZeptoBtTree : MonoBehaviour
             vel.y += ImpulseVy;
             vel.z += ImpulseVz;
 
-            MainBody.velocity = vel;
+            MainBody.linearVelocity = vel;
 
             ImpulseVx = 0;
             ImpulseVy = 0;

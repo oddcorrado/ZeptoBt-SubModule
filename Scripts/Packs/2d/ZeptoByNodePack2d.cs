@@ -426,7 +426,7 @@ namespace ZeptoBt.NodePack2d
 
             Vector2 dir = Vector2.up;
             Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-            if (rb != null) dir = rb.velocity.Rotate(90f).normalized;
+            if (rb != null) dir = rb.linearVelocity.Rotate(90f).normalized;
             Vector2 velocity = new Vector2(
                         dir.x * (vxVar != null ? (float)Root.Evaluator.Variables[vxVar] : vx),
                         dir.y * (vyVar != null ? (float)Root.Evaluator.Variables[vyVar] : vy));

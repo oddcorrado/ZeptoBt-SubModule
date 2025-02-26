@@ -397,7 +397,7 @@ namespace ZeptoBt.NodePack3d
 
             Vector3 dir = Vector3.up;
             Rigidbody rb = go.GetComponent<Rigidbody>();
-            if (rb != null) dir = Vector3.Cross(rb.velocity, Tree.MainBody.velocity).normalized;
+            if (rb != null) dir = Vector3.Cross(rb.linearVelocity, Tree.MainBody.linearVelocity).normalized;
             Vector3 velocity = new Vector3(
                         dir.x * (vxVar != null ? (float)Root.Evaluator.Variables[vxVar] : vx),
                         dir.y * (vyVar != null ? (float)Root.Evaluator.Variables[vyVar] : vy),

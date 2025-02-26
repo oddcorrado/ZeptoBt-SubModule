@@ -29,7 +29,7 @@ public class ZeptoBtActionVelocityMove : ZeptoBtAction
 
     public override NodeReturn Tick()
     {
-        body.velocity = new Vector2(vx, vy);
+        body.linearVelocity = new Vector2(vx, vy);
         return NodeReturn.Success;
     }
 
