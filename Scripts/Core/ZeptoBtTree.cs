@@ -465,6 +465,11 @@ public class ZeptoBtTree : SimulationBehaviour
         StartCoroutine(Init());
     }
 
+    protected override void Restart()
+    {
+        foreach (var node in nodes)
+            node.Restart();
+    }
 
     protected virtual IEnumerator Init()
     {

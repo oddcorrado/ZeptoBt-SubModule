@@ -2,6 +2,7 @@
 using CodingSeb.ExpressionEvaluator;
 using System;
 using UnityEngine;
+using Amazon.S3.Model;
 
 // variable extractor
 // Node Spawn (fx + blasts)
@@ -72,6 +73,8 @@ namespace ZeptoBt
 
         public virtual void Init(SimulationContext ctx)
         { }
+
+        public virtual void Restart() { }
 
         public override string ToString()
         {
