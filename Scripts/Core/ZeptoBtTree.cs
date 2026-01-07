@@ -15,7 +15,7 @@ using Spine.Unity;
 
 // TODO
 // tree extension (new Node classes)
-public class ZeptoBtTree : MonoBehaviour
+public class ZeptoBtTree : SimulationBehaviour
 {
     [SerializeField] protected string filename;
     [SerializeField] protected ZeptoBtTrigger[] triggers;
@@ -459,7 +459,14 @@ public class ZeptoBtTree : MonoBehaviour
 
     protected Dictionary<string, ZeptoBtTrigger> nameToTrigger =  new Dictionary<string, ZeptoBtTrigger>();
 
-    protected virtual IEnumerator Start()
+    protected override void Initialize()
+    {
+        base.Initialize();
+        StartCoroutine(Init());
+    }
+
+
+    protected virtual IEnumerator Init()
     {
         MainBody2D = GetComponent<Rigidbody2D>();
         MainBody = GetComponent<Rigidbody>();
@@ -502,6 +509,8 @@ public class ZeptoBtTree : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (!IsSimulationInitialized) return;
+
         CurrentTime = Time.time;
         if (MainBody2D != null)
         {
