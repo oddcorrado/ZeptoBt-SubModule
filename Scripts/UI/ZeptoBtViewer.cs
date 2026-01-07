@@ -9,7 +9,7 @@ using System;
 using UnityEngine.EventSystems;
 using CodingSeb.ExpressionEvaluator;
 
-public class ZeptoBtViewer : MonoBehaviour
+public class ZeptoBtViewer : SimulationBehaviour
 {
     [SerializeField] ZeptoBtViewNode viewNodePrefab;
     [SerializeField] ZeptoLineUi lineRendererPrefab;
@@ -261,6 +261,7 @@ public class ZeptoBtViewer : MonoBehaviour
     }
     void Update()
     {
+        if (!IsSimulationInitialized) return;
         if (!IsActive) return;
 
         isInInspector = typeDropdown.IsExpanded || inspectorOver.IsOverInspector;
@@ -536,7 +537,7 @@ public class ZeptoBtViewer : MonoBehaviour
             // leaf.Tree = Root.Tree;
             // leaf.Root = Root.Root;
             Debug.Log($"dd {leaf} Root={leaf.Root}");
-            leaf.Init();
+            leaf.Init(Simulation);
         }
 
 
@@ -628,7 +629,8 @@ public class ZeptoBtViewer : MonoBehaviour
         IsQuickViewActive = !IsQuickViewActive;
         quickViewModeEvent?.Invoke(IsQuickViewActive);
     }
-    void Start()
+
+    protected override void Initialize()
     {
         typeDropdown.ClearOptions();
 

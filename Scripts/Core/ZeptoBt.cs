@@ -70,7 +70,7 @@ namespace ZeptoBt
         {
         }
 
-        public virtual void Init()
+        public virtual void Init(SimulationContext ctx)
         { }
 
         public override string ToString()

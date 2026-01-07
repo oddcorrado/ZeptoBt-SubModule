@@ -298,7 +298,7 @@ public class ZeptoBtTree : SimulationBehaviour
                     (parentNode as NodeComposite).Children.Add(selector);
                     if (parentNode is NodeDecorator)
                         parentNode = null;
-                    selector.Init();
+                    selector.Init(Simulation);
                     break;
 
                 case ">":
@@ -317,7 +317,7 @@ public class ZeptoBtTree : SimulationBehaviour
                     if (parentNode is NodeDecorator)
                         parentNode = null;
                         
-                    sequence.Init();
+                    sequence.Init(Simulation);
                     break;
 
                 default:
@@ -339,7 +339,7 @@ public class ZeptoBtTree : SimulationBehaviour
                         leaf.Tree = this;
                         leaf.Root = Root;
                         leaf.Params = parameters;
-                        leaf.Init();
+                        leaf.Init(Simulation);
                         nodes.Add(leaf);
                     }
 
@@ -357,7 +357,7 @@ public class ZeptoBtTree : SimulationBehaviour
                         decorator.Root = Root;
                         decorator.Params = parameters;
                         parentNodes.Add(decorator);
-                        decorator.Init();
+                        decorator.Init(Simulation);
                         nodes.Add(decorator);
                     }
 

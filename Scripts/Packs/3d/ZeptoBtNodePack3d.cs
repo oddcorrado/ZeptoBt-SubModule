@@ -102,9 +102,9 @@ namespace ZeptoBt.NodePack3d
         Vector3 target;
         Vector3 spawnPos;
 
-        public override void Init()
+        public override void Init(SimulationContext ctx)
         {
-            base.Init();
+            base.Init(ctx);
             spawnPos = Tree.transform.position;
         }
         public override void Tick()

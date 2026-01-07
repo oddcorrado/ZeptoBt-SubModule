@@ -114,9 +114,9 @@ namespace ZeptoBt.NodePack2d
         Vector2 target;
         Vector2 spawnPos;
 
-        public override void Init()
+        public override void Init(SimulationContext c)
         {
-            base.Init();
+            base.Init(c);
             spawnPos = Tree.transform.position;
         }
         public override void Tick()
