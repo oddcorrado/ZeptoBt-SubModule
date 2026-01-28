@@ -2,7 +2,6 @@
 using CodingSeb.ExpressionEvaluator;
 using System;
 using UnityEngine;
-using Amazon.S3.Model;
 
 // variable extractor
 // Node Spawn (fx + blasts)
