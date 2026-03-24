@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -201,7 +201,7 @@ public class ZeptoBtTree : SimulationBehaviour
     {
         if (StartVariables == null || StartVariables == "") return;
         List<string> startVar = new List<string>(StartVariables.Split('\n'));   
-        List<string> currentVar = new List<string>(FileData.Split('\n'));
+        List<string> currentVar = new List<string>(FileData?.Split('\n') ?? StartVariables.Split('\n'));
      
         string pattern = @"\w.+";
         int varIdx = 0;
